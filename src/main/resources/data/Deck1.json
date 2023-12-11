@@ -1,0 +1,62 @@
+[
+  {
+    "name": "abra",
+    "type": "psychic",
+    "hp": 30,
+    "weakness": "psychic",
+    "resistance": "none",
+    "retreatCost": 0,
+    "previousStage": "none",
+    "nextStage": "kadabra",
+    "image": "bs.043.abra_.jpg"
+  },
+  {
+    "name": "charmander",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "charmeleon",
+    "image": "bs.046.charmander.jpg"
+
+  },
+  {
+    "name": "squirtle",
+    "type": "water",
+    "hp": 40,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "wartortle",
+    "image": "bs.063.squirtle.jpg"
+  },
+  {
+    "name": "bulbasaur",
+    "type": "grass",
+    "hp": 45,
+    "weakness": "fire",
+    "resistance": "none",
+    "retreatCost": 2,
+    "previousStage": "none",
+    "nextStage": "ivysaur",
+    "image": "bs.044.bulbasaur.jpg",
+    "actions": [
+      "attack","pound"
+    ]
+  },
+  {
+    "name": "pikachu",
+    "type": "electric",
+    "hp": 35,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "raichu",
+    "image": "bs.058.pikachu.jpg"
+  }
+]
+

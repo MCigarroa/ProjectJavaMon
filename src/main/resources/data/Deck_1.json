@@ -1,0 +1,421 @@
+[
+  {
+    "name": "charmander",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "charmeleon",
+    "image": "bs.046.charmander.jpg"
+  },
+  {
+    "name": "charmander",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "charmeleon",
+    "image": "bs.046.charmander.jpg"
+  },
+  {
+    "name": "charmander",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "charmeleon",
+    "image": "bs.046.charmander.jpg"
+  },
+  {
+    "name": "charmander",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "charmeleon",
+    "image": "bs.046.charmander.jpg"
+  },
+  {
+    "name": "charmeleon",
+    "type": "fire",
+    "hp": 80,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "charmander",
+    "nextStage": "charizard",
+    "image": "bs.024.charmeleon.jpg"
+  },
+  {
+    "name": "charmeleon",
+    "type": "fire",
+    "hp": 80,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "charmander",
+    "nextStage": "charizard",
+    "image": "bs.024.charmeleon.jpg"
+  },
+  {
+    "name": "charmeleon",
+    "type": "fire",
+    "hp": 80,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "charmander",
+    "nextStage": "charizard",
+    "image": "bs.024.charmeleon.jpg"
+  },
+  {
+    "name": "charizard",
+    "type": "fire",
+    "hp": 120,
+    "weakness": "water",
+    "resistance": "ground",
+    "retreatCost": 3,
+    "previousStage": "charmeleon",
+    "nextStage": "none",
+    "image": "bs.004.charizard.jpg"
+  },
+  {
+    "name": "charizard",
+    "type": "fire",
+    "hp": 120,
+    "weakness": "water",
+    "resistance": "ground",
+    "retreatCost": 3,
+    "previousStage": "charmeleon",
+    "nextStage": "none",
+    "image": "bs.004.charizard.jpg"
+  },
+  {
+    "name": "charizard",
+    "type": "fire",
+    "hp": 120,
+    "weakness": "water",
+    "resistance": "ground",
+    "retreatCost": 3,
+    "previousStage": "charmeleon",
+    "nextStage": "none",
+    "image": "bs.004.charizard.jpg"
+  },
+  {
+    "name": "vulpix",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "ninetales",
+    "image": "bs.068.vulpix.jpg"
+  },
+  {
+    "name": "vulpix",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "ninetales",
+    "image": "bs.068.vulpix.jpg"
+  },
+  {
+    "name": "vulpix",
+    "type": "fire",
+    "hp": 50,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "ninetales",
+    "image": "bs.068.vulpix.jpg"
+  },
+  {
+    "name": "ninetales",
+    "type": "fire",
+    "hp": 80,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "vulpix",
+    "nextStage": "none",
+    "image": "bs.012.ninetales.jpg"
+  },
+  {
+    "name": "ninetales",
+    "type": "fire",
+    "hp": 80,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "vulpix",
+    "nextStage": "none",
+    "image": "bs.012.ninetales.jpg"
+  },
+  {
+    "name": "ninetales",
+    "type": "fire",
+    "hp": 80,
+    "weakness": "water",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "vulpix",
+    "nextStage": "none",
+    "image": "bs.012.ninetales.jpg"
+  },
+  {
+    "name": "pikachu",
+    "type": "electric",
+    "hp": 40,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "raichu",
+    "image": "bs.058.pikachu.jpg"
+  },
+  {
+    "name": "pikachu",
+    "type": "electric",
+    "hp": 40,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "raichu",
+    "image": "bs.058.pikachu.jpg"
+  },
+  {
+    "name": "pikachu",
+    "type": "electric",
+    "hp": 40,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "raichu",
+    "image": "bs.058.pikachu.jpg"
+  },
+  {
+    "name": "pikachu",
+    "type": "electric",
+    "hp": 40,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "raichu",
+    "image": "bs.058.pikachu.jpg"
+  },
+  {
+    "name": "raichu",
+    "type": "electric",
+    "hp": 80,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "pikachu",
+    "nextStage": "none",
+    "image": "bs.014.raichu.jpg"
+  },
+  {
+    "name": "raichu",
+    "type": "electric",
+    "hp": 80,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "pikachu",
+    "nextStage": "none",
+    "image": "bs.014.raichu.jpg"
+  },
+  {
+    "name": "raichu",
+    "type": "electric",
+    "hp": 80,
+    "weakness": "ground",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "pikachu",
+    "nextStage": "none",
+    "image": "bs.014.raichu.jpg"
+  },
+  {
+    "name": "professor_oak",
+    "image": "bs.088.professor_oak.jpg"
+  },
+  {
+    "name": "professor_oak",
+    "image": "bs.088.professor_oak.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "super_potion",
+    "image": "bs.090.super_potion.jpg"
+  },
+  {
+    "name": "super_potion",
+    "image": "bs.090.super_potion.jpg"
+  },
+  {
+    "name": "super_potion",
+    "image": "bs.090.super_potion.jpg"
+  },
+  {
+    "name": "revive",
+    "image": "bs.089.revive.jpg"
+  },
+  {
+    "name": "revive",
+    "image": "bs.089.revive.jpg"
+  },
+  {
+    "name": "energy_retrieval",
+    "image": "bs.081.energy_retrieval.jpg"
+  },
+  {
+    "name": "energy_retrieval",
+    "image": "bs.081.energy_retrieval.jpg"
+  },
+  {
+    "name": "energy_retrieval",
+    "image": "bs.081.energy_retrieval.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "fire_energy",
+    "type": "fire",
+    "image": "bs.098.fire_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  },
+  {
+    "name": "electric_energy",
+    "type": "electric",
+    "image": "bs.100.lightning_energy.jpg"
+  }
+]

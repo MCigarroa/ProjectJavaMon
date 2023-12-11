@@ -1,0 +1,418 @@
+[
+  {
+    "name": "squirtle",
+    "type": "water",
+    "hp": 40,
+    "weakness": "eletric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "wartortle",
+    "image": "bs.063.squirtle.jpg"
+  },
+  {
+    "name": "squirtle",
+    "type": "water",
+    "hp": 40,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "wartortle",
+    "image": "bs.063.squirtle.jpg"
+  },
+  {
+    "name": "squirtle",
+    "type": "water",
+    "hp": 40,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "wartortle",
+    "image": "bs.063.squirtle.jpg"
+  },
+  {
+    "name": "squirtle",
+    "type": "water",
+    "hp": 40,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "wartortle",
+    "image": "bs.063.squirtle.jpg"
+  },
+  {
+    "name": "wartortle",
+    "type": "water",
+    "hp": 70,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "squirtle",
+    "nextStage": "blastoise",
+    "image": "bs.042.wartortle.jpg"
+  },
+  {
+    "name": "wartortle",
+    "type": "water",
+    "hp": 70,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "squirtle",
+    "nextStage": "blastoise",
+    "image": "bs.042.wartortle.jpg"
+  },
+  {
+    "name": "wartortle",
+    "type": "water",
+    "hp": 70,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "squirtle",
+    "nextStage": "blastoise",
+    "image": "bs.042.wartortle.jpg"
+  },
+  {
+    "name": "blastoise",
+    "type": "water",
+    "hp": 100,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 3,
+    "previousStage": "wartortle",
+    "nextStage": "none",
+    "image": "bs.002.blastoise.jpg"
+  },
+  {
+    "name": "blastoise",
+    "type": "water",
+    "hp": 100,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 3,
+    "previousStage": "wartortle",
+    "nextStage": "none",
+    "image": "bs.002.blastoise.jpg"
+  },
+  {
+    "name": "blastoise",
+    "type": "water",
+    "hp": 100,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 3,
+    "previousStage": "wartortle",
+    "nextStage": "none",
+    "image": "bs.002.blastoise.jpg"
+  },
+  {
+    "name": "magikarp",
+    "type": "water",
+    "hp": 30,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "gyarados",
+    "image": "bs.035.magikarp.jpg"
+  },
+  {
+    "name": "magikarp",
+    "type": "water",
+    "hp": 30,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "gyarados",
+    "image": "bs.035.magikarp.jpg"
+  },
+  {
+    "name": "magikarp",
+    "type": "water",
+    "hp": 30,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "gyarados",
+    "image": "bs.035.magikarp.jpg"
+  },
+  {
+    "name": "gyarados",
+    "type": "water",
+    "hp": 100,
+    "weakness": "electric",
+    "resistance": "ground",
+    "retreatCost": 3,
+    "previousStage": "magikarp",
+    "nextStage": "none",
+    "image": "bs.006.gyarados.jpg"
+  },
+  {
+    "name": "gyarados",
+    "type": "water",
+    "hp": 100,
+    "weakness": "electric",
+    "resistance": "ground",
+    "retreatCost": 3,
+    "previousStage": "magikarp",
+    "nextStage": "none",
+    "image": "bs.006.gyarados.jpg"
+  },
+  {
+    "name": "gyarados",
+    "type": "water",
+    "hp": 100,
+    "weakness": "electric",
+    "resistance": "ground",
+    "retreatCost": 3,
+    "previousStage": "magikarp",
+    "nextStage": "none",
+    "image": "bs.006.gyarados.jpg"
+  },
+  {
+    "name": "seel",
+    "type": "water",
+    "hp": 60,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "dewgong",
+    "image": "bs.041.seel_.jpg"
+  },
+  {
+    "name": "seel",
+    "type": "water",
+    "hp": 60,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "dewgong",
+    "image": "bs.041.seel_.jpg"
+  },
+  {
+    "name": "seel",
+    "type": "water",
+    "hp": 60,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 1,
+    "previousStage": "none",
+    "nextStage": "dewgong",
+    "image": "bs.041.seel_.jpg"
+  },
+  {
+    "name": "dewgong",
+    "type": "water",
+    "hp": 80,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 3,
+    "previousStage": "seel",
+    "nextStage": "none",
+    "image": "bs.025.dewgong.jpg"
+  },
+  {
+    "name": "dewgong",
+    "type": "water",
+    "hp": 80,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 3,
+    "previousStage": "seel",
+    "nextStage": "none",
+    "image": "bs.025.dewgong.jpg"
+  },
+  {
+    "name": "dewgong",
+    "type": "water",
+    "hp": 80,
+    "weakness": "electric",
+    "resistance": "none",
+    "retreatCost": 3,
+    "previousStage": "seel",
+    "nextStage": "none",
+    "image": "bs.025.dewgong.jpg"
+  },
+  {
+    "name": "professor_oak",
+    "image": "bs.088.professor_oak.jpg"
+  },
+  {
+    "name": "professor_oak",
+    "image": "bs.088.professor_oak.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "bill",
+    "image": "bs.091.bill_.jpg"
+  },
+  {
+    "name": "potion",
+    "image": "bs.094.potion.jpg"
+  },
+  {
+    "name": "potion",
+    "image": "bs.094.potion.jpg"
+  },
+  {
+    "name": "potion",
+    "image": "bs.094.potion.jpg"
+  },
+  {
+    "name": "potion",
+    "image": "bs.094.potion.jpg"
+  },
+  {
+    "name": "super_potion",
+    "image": "bs.090.super_potion.jpg"
+  },
+  {
+    "name": "super_potion",
+    "image": "bs.090.super_potion.jpg"
+  },
+  {
+    "name": "revive",
+    "image": "bs.089.revive.jpg"
+  },
+  {
+    "name": "revive",
+    "image": "bs.089.revive.jpg"
+  },
+  {
+    "name": "gust_of_wind",
+    "image": "bs.093.gust_of_wind.jpg"
+  },
+  {
+    "name": "gust_of_wind",
+    "image": "bs.093.gust_of_wind.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  },
+  {
+    "name": "water_energy",
+    "type": "water",
+    "image": "bs.102.water_energy.jpg"
+  }
+]
