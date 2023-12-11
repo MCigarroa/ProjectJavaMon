@@ -28,7 +28,7 @@ public abstract class Card {
     public String getName() {
         return name;
     };
-    public CardPosition getCardPostition() {
+    public CardPosition getCardPosition() {
         return cardPosition;
     }
 
@@ -46,6 +46,6 @@ public abstract class Card {
 
     @Override
     public String toString() {
-        return "Name: " + name + " CardID: " + cardID;
+        return "Name: " + name + " CardID: " + cardID + " CardPosition: " + cardPosition;
     }
 }

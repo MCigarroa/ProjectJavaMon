@@ -1,11 +1,10 @@
 package project_javamon.homis_arena.Game;
 
+import project_javamon.homis_arena.Main;
 import project_javamon.homis_arena.Util.PokemonCardParser;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import static project_javamon.homis_arena.Main.gameState;
 
 public class Game {
     private static ArrayList<Player> playerList;
@@ -24,12 +23,12 @@ public class Game {
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
-        gameState.setCurrentState(GameState.INITIAL_START);
+        Main.getGameState().setCurrentState(GameState.INITIAL_START);
     }
 
 
 
-    public static ArrayList<Player> getPlayerList() {
+    public ArrayList<Player> getPlayerList() {
         return playerList;
     }
 

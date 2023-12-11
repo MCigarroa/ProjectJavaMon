@@ -1,8 +1,12 @@
 package project_javamon.homis_arena.Game;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
+import javafx.collections.FXCollections;
+import project_javamon.homis_arena.Controller.GameController;
 import project_javamon.homis_arena.Game.Pokemon.Card;
+import project_javamon.homis_arena.Main;
+import project_javamon.homis_arena.Util.CardPosition;
 
 import java.util.ArrayList;
 
@@ -16,28 +20,44 @@ public class Player {
     private ObservableList<Card> discard = FXCollections.observableArrayList();
     private ObservableList<Card> prize = FXCollections.observableArrayList();
 
-    public Player(ObservableList<Card> deck) {
+    GameController gameController = Main.getMainGameController();
+
+    public Player() {
         this.name = "Player " + playerNumber;
         playerNumber++;
-        this.deck = deck;
-    }
-    public Player(){
-        this.name = "Player " + playerNumber;
-        playerNumber++;
-        this.deck = FXCollections.observableArrayList();;
     }
 
     public Card drawCard(){
         if ( deck != null && !deck.isEmpty()){
-            Card card = deck.getLast();
+            Card card = deck.removeLast();
+            card.setCardPositions(CardPosition.HAND);
             hand.add(card);
             return card;
         }
         return null;
     }
 
-    public void printPlayerCards() {
 
+    public void printPlayerCards() {
+        System.out.println("Player Name: " + name);
+
+        printCardList("Deck", deck);
+        printCardList("Hand", hand);
+        printCardList("Bench", bench);
+        printCardList("Active", active);
+        printCardList("Discard", discard);
+        printCardList("Prize", prize);
+    }
+
+    private void printCardList(String listName, ObservableList<Card> cards) {
+        System.out.println(listName + ":");
+        if (cards.isEmpty()) {
+            System.out.println("  [No cards]");
+        } else {
+            for (Card card : cards) {
+                System.out.println("  " + card.toString());
+            }
+        }
     }
 
     public Card findCardById(String cardId) {
@@ -95,7 +115,7 @@ public class Player {
         return active;
     }
 
-    public ObservableList<Card> getDiscardPile() {
+    public ObservableList<Card> getDiscard() {
         return discard;
     }
 
@@ -104,21 +124,48 @@ public class Player {
     }
 
     // Utilities
-    public void RemoveFromPrevious(Card card) {
-        card.setFormerCardPosition(card.getCardPostition());
-        switch (card.getCardPostition()) {
-            case HAND -> hand.remove(card);
-            case PRIZE -> prize.remove(card);
-            case DISCARD -> discard.remove(card);
-            case ACTIVE -> active.remove(card);
-            case BENCH -> bench.remove(card);
-            case DECK -> deck.remove(card);
-            default -> throw new RuntimeException("Couldn't remove card from Previous: " + card);
+    public void RemoveFromPrevious(Card card, CardPosition newCardPosition) {
+        CardPosition previousPosition = card.getCardPosition();
+        card.setFormerCardPosition(previousPosition);
+        card.setCardPositions(newCardPosition);
+
+        System.out.println("Removing card from previous position: " + previousPosition);
+
+        ObservableList<Card> previousList = switch (previousPosition) {
+            case HAND -> hand;
+            case PRIZE -> prize;
+            case DISCARD -> discard;
+            case ACTIVE -> active;
+            case BENCH -> bench;
+            case DECK -> deck;
+            case UNKNOWN -> {
+                System.out.println("Error: Unknown previous position for card " + card.getCardID());
+                yield null;
+            }
+        };
+
+        if (previousList != null && !previousList.remove(card)) {
+            System.out.println("Error: Failed to remove card from " + previousPosition + " for card " + card.getCardID());
         }
-        System.out.println("Failed to remove card from HAND:");
-        System.out.println(card);
     }
 
-    public void addToActive(Card card) {
+    public void setGameController(GameController gameController) {
+        System.out.println("Setting GameController in Player: " + gameController);
+        this.gameController = gameController;
+        //setupHandListener();
+    }
+
+    private void setupHandListener() {
+        this.hand.addListener((ListChangeListener<Card>) change -> {
+            while (change.next()) {
+                if (change.wasAdded() || change.wasRemoved()) {
+                    if (gameController != null) {
+                        gameController.updateHandUI();
+                    } else {
+                        System.out.println("Error: GameController is null when trying to update UI");
+                    }
+                }
+            }
+        });
     }
 }

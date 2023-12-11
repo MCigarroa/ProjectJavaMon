@@ -12,13 +12,19 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import project_javamon.homis_arena.Controller.GameController;
 import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Game.Game;
+import project_javamon.homis_arena.Game.Player;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application {
-    public static GameState gameState;
-    public static Game game;
+    private static GameState gameState;
+    private static Game game;
+    private static GameController gameController;
 
 
     public static void main(String[] args) { launch(); }
@@ -55,6 +61,15 @@ public class Main extends Application {
         Scene scene = null;
         try {
             scene = new Scene(fxmlLoader.load(), X_RES, Y_RES);
+            GameController gameController = fxmlLoader.getController();
+            if (gameController == null) {
+                throw new IllegalStateException("GameController is null after FXML load.");
+            }
+
+            for (Player player : game.getPlayerList()) {
+                player.setGameController(gameController);
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -104,5 +119,15 @@ public class Main extends Application {
         return new Scene(root, X_RES,Y_RES);
     }
     // Scene creation END =========================================
+
+    public static Game getGame() {
+        return game;
+    }
+    public static GameState getGameState() {
+        return gameState;
+    }
+    public static GameController getMainGameController() {
+        return gameController;
+    }
 
 }

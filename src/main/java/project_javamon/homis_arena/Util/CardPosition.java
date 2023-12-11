@@ -7,4 +7,6 @@ public enum CardPosition {
     BENCH,
     PRIZE,
     DISCARD,
+    UNKNOWN,
 }
+
