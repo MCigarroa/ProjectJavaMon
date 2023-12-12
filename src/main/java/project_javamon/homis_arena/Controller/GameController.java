@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,7 +51,7 @@ public class GameController implements Initializable {
 
     Image backCard = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/cardback.jpg")));
     HBox southHand;
-    HBox northCardHand;
+    HBox northHand;
 
     ArrayList<Node> northMat;
     ArrayList<Node> southMat;
@@ -68,8 +69,11 @@ public class GameController implements Initializable {
 
         Game game = Main.getGame();
         GameState gameState = Main.getGameState();
-        Player player = game.getPlayerList().get(0);
-        bindPlayerToUI(player);
+
+        Player player1 = game.getPlayerList().get(0);
+        bindPlayerToUI(player1);
+        Player player2 = game.getPlayerList().get(1);
+        bindPlayerToUI(player2);
     }
 
     private void bindPlayerToUI(Player player) {
@@ -77,7 +81,7 @@ public class GameController implements Initializable {
             updateHandUI(player.getHand());
         });
         player.getActive().addListener((ListChangeListener.Change<? extends Card> change) -> {
-            updateActiveUI(player.getHand());
+            updateActiveUI(player.getActive());
         });
 //        player.getPrize().addListener((ListChangeListener.Change<? extends Card> change) -> {
 //            updatePrizeUI(player.getHand());
@@ -89,6 +93,7 @@ public class GameController implements Initializable {
 //            updateDiscardUI(player.getHand());
 //        });
     }
+
 
     private void updateActiveUI(ObservableList<Card> hand) {
         updateActiveSpacing(southActive);
@@ -119,7 +124,7 @@ public class GameController implements Initializable {
         generateSouthCardHand();
         generateNorthCardHand();
 
-        northMat = new ArrayList<>(Arrays.asList(northBench, northActive, northPrize, northDiscard, northDeck, northCardHand));
+        northMat = new ArrayList<>(Arrays.asList(northBench, northActive, northPrize, northDiscard, northDeck, northHand));
         southMat = new ArrayList<>(Arrays.asList(southBench, southActive, southPrize, southDiscard, southDeck, southHand));
 
         Collections.shuffle(game.getPlayerList().get(0).getDeck());
@@ -152,6 +157,7 @@ public class GameController implements Initializable {
         showCoverScreen(gameMat);
     }
     private void showCoverScreen(AnchorPane gameMat) {
+        // This creates a pane that covers the screen for player switch
         StackPane coverPane = new StackPane();
         coverPane.setStyle("-fx-background-color: rgba(0, 0, 0, 1);");
         coverPane.setPrefSize(gameMat.getWidth(), gameMat.getHeight());
@@ -172,13 +178,14 @@ public class GameController implements Initializable {
     private void switchPlayers() {
         printMatContents("Before switch - NorthMat: ", northMat);
         printMatContents("Before switch - SouthMat: ", southMat);
+        Collections.reverse(game.getPlayerList());
+
         ArrayList<Node> tempSouthContent = new ArrayList<>();
         tempSouthContent.addAll(southMat);
         southMat.clear();
         southMat.addAll(northMat);
         northMat.clear();
         northMat.addAll(tempSouthContent);
-
         updateUI();
         printMatContents("After switch - NorthMat: ", northMat);
         printMatContents("After switch - SouthMat: ", southMat);
@@ -262,29 +269,41 @@ public class GameController implements Initializable {
         southActive.getChildren().clear();
         southPrize.getChildren().clear();
         southDiscard.getChildren().clear();
+        northHand.getChildren().clear();
+        northBench.getChildren().clear();
+        northActive.getChildren().clear();
+        northPrize.getChildren().clear();
+        northDiscard.getChildren().clear();
 
         populateContainerFromList(southHand, game.getPlayerList().get(0).getHand());
         populateContainerFromList(southBench, game.getPlayerList().get(0).getBench());
         populateContainerFromList(southActive, game.getPlayerList().get(0).getActive());
         populateContainerFromList(southPrize, game.getPlayerList().get(0).getPrize());
         populateContainerFromList(southDiscard, game.getPlayerList().get(0).getDiscard());
+        populateContainerFromList(northHand, game.getPlayerList().get(1).getHand());
+        populateContainerFromList(northBench, game.getPlayerList().get(1).getBench());
+        populateContainerFromList(northActive, game.getPlayerList().get(1).getActive());
+        populateContainerFromList(northPrize, game.getPlayerList().get(1).getPrize());
+        populateContainerFromList(northDiscard, game.getPlayerList().get(1).getDiscard());
 
         updateActiveSpacing(southActive);
+        updateActiveSpacing(northActive);
         updateHandUI();
     }
 
     private void populateContainerFromList(Pane container, ObservableList<Card> cardList) {
         for (Card card : cardList) {
             ImageView cardView;
-            if (container.equals(southPrize)){
+            if (container.equals(southPrize) || container.equals(southDiscard) || container.equals(northPrize) ||
+                    container.equals(northHand) || container.equals(northDiscard)){
                 cardView = new ImageView(backCard);
+                setCardHeightAndWidth(cardView);
+                addDragAndDropCapability(cardView, card);
+                setUpContextMenuWithPopUp(cardView);
             } else {
                 cardView = createCardImageView(card);
             }
 
-            setCardHeightAndWidth(cardView);
-            addDragAndDropCapability(cardView, card);
-            setUpContextMenuWithPopUp(cardView);
             container.getChildren().add(cardView);
         }
     }
@@ -329,10 +348,10 @@ public class GameController implements Initializable {
         gameMat.getChildren().add(southHand);
     }
     private void generateNorthCardHand() {
-        northCardHand = new HBox();
-        northCardHand.setLayoutX(gameMat.getPrefWidth() /  2);
-        northCardHand.setLayoutY(gameMat.getPrefHeight() - 150);
-        gameMat.getChildren().add(northCardHand);
+        northHand = new HBox();
+        northHand.setLayoutX(gameMat.getPrefWidth() /  2);
+        northHand.setLayoutY(0);
+        gameMat.getChildren().add(northHand);
     }
 
     private void updateDeckUI(VBox southDeck) {
@@ -406,7 +425,7 @@ public class GameController implements Initializable {
         if (totalCardWidth > 1400) {
             double excessWidth = totalCardWidth - 1400;
             // This controls how much it compresses: 100 ATM it is too jaring
-            double reductionPerCard = Math.max(excessWidth / numberOfCards, 100);
+            double reductionPerCard = Math.max(excessWidth / numberOfCards, 30);
             cardSpacing -= reductionPerCard;
             totalCardWidth = (cardWidth * numberOfCards) + (cardSpacing * (numberOfCards - 1));
         }
@@ -414,7 +433,8 @@ public class GameController implements Initializable {
         cardHand.setSpacing(cardSpacing);
 
         cardHand.setLayoutX((gameMat.getPrefWidth() - totalCardWidth) / 2);
-        cardHand.setLayoutY(gameMat.getPrefHeight() - 150);
+        // Check if it is northhand to make sure Y is not dragged down to southhand position
+        cardHand.setLayoutY(cardHand.equals(northHand)? 0 :gameMat.getPrefHeight() - 150);
     }
 
     private void setCardHeightAndWidth(ImageView cardView){

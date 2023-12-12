@@ -43,7 +43,7 @@ public class Main extends Application {
         Media sound = new Media(new File(musicFile).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.setVolume(0.2);
+        mediaPlayer.setVolume(0.1);
         mediaPlayer.play();
 
         stage.getIcons().add(image);
@@ -100,7 +100,7 @@ public class Main extends Application {
         menuLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
         menuLayout.getChildren().addAll(titleLabel, startButton, importDecksButton, exitButton);
         // TODO Will need to bind properties to auto align #source Chpt 14ish?
-        menuLayout.setAlignment(Pos.CENTER_LEFT);
+        menuLayout.setAlignment(Pos.CENTER);
 
         root.getChildren().add(menuLayout);
         return new Scene(root, X_RES, Y_RES);
