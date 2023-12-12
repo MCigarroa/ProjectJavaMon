@@ -16,18 +16,18 @@ public abstract class Card {
     protected Card() {
         this.cardID = "cardID" + uniqueNum;
         uniqueNum++;
-    };
+    }
 
     public String getCardID() {
         return cardID;
     }
     public String getImage() {
         return image;
-    };
+    }
 
     public String getName() {
         return name;
-    };
+    }
     public CardPosition getCardPosition() {
         return cardPosition;
     }

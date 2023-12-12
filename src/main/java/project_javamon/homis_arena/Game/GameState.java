@@ -14,7 +14,7 @@ public class GameState {
         @Override
         public boolean isStateComplete() {
             GameState.flagEventList.add(FlagEvent.PLAYER_CAN_DRAW_FROM_DECK);
-            // Both players must have basic monster pokemon
+            // Both players must have basic monster Pokémon
             return false;
         }
 
@@ -74,7 +74,7 @@ public class GameState {
         // Players need to flip a coin to determine who goes first
         flagEventList = EnumSet.noneOf(FlagEvent.class);
         winner = null;
-    };
+    }
 
     public AbstractState getCurrentState() {
         return currentState;
@@ -104,10 +104,10 @@ public class GameState {
     }
 
     public void setFlagEventList(Set<FlagEvent> flagEventList) {
-        this.flagEventList = flagEventList;
+        GameState.flagEventList = flagEventList;
     }
     public void addFlagEventList(FlagEvent flagEvent) {
-        this.flagEventList.add(flagEvent);
+        flagEventList.add(flagEvent);
     }
 
     public void clearFlagEventList(){

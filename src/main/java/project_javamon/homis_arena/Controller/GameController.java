@@ -48,7 +48,7 @@ public class GameController implements Initializable {
     public Button showHandBtn;
     public Button endTurnBtn;
 
-    Image backCard = new Image(getClass().getResourceAsStream("/images/cardback.jpg"));
+    Image backCard = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/cardback.jpg")));
     HBox southHand;
     HBox northCardHand;
 
@@ -173,17 +173,11 @@ public class GameController implements Initializable {
         printMatContents("Before switch - NorthMat: ", northMat);
         printMatContents("Before switch - SouthMat: ", southMat);
         ArrayList<Node> tempSouthContent = new ArrayList<>();
-        for (Node node : southMat) {
-            tempSouthContent.add(node);
-        }
+        tempSouthContent.addAll(southMat);
         southMat.clear();
-        for (Node node : northMat) {
-            southMat.add(node);
-        }
+        southMat.addAll(northMat);
         northMat.clear();
-        for (Node node : tempSouthContent) {
-            northMat.add(node);
-        }
+        northMat.addAll(tempSouthContent);
 
         updateUI();
         printMatContents("After switch - NorthMat: ", northMat);

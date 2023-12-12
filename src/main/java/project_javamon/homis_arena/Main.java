@@ -18,8 +18,7 @@ import project_javamon.homis_arena.Game.Game;
 import project_javamon.homis_arena.Game.Player;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class Main extends Application {
     private static GameState gameState;
@@ -38,7 +37,7 @@ public class Main extends Application {
         gameState = new GameState();
         game = new Game();
 
-        Image image = new Image(getClass().getResourceAsStream("/images/homi-poki.jpg"));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/homi-poki.jpg")));
 
         String musicFile = "src\\main\\resources\\music\\1-01. Opening.mp3";
         Media sound = new Media(new File(musicFile).toURI().toString());
@@ -58,7 +57,7 @@ public class Main extends Application {
     private Scene createStartScene(Stage stage) {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/project_javamon/homis_arena/GameMat.fxml"));
-        Scene scene = null;
+        Scene scene;
         try {
             scene = new Scene(fxmlLoader.load(), X_RES, Y_RES);
             GameController gameController = fxmlLoader.getController();
@@ -77,7 +76,7 @@ public class Main extends Application {
     }
     private Scene createMainScene(Stage stage){
         Pane root = new Pane();
-        Image image = new Image(getClass().getResourceAsStream("/images/homi-poki.jpg"));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/homi-poki.jpg")));
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
         root.setBackground(new Background(backgroundImage));
 
