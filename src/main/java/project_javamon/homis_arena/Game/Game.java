@@ -10,6 +10,8 @@ public class Game {
     private static ArrayList<Player> playerList;
     private Player player1;
     private Player player2;
+    private static Player activePlayer;
+    private static Player waitingPlayer;
 
     private int turnNumber;
 
@@ -20,19 +22,30 @@ public class Game {
         player1.setDeck(PokemonCardParser.getAllAttributes(new File("src/main/resources/data/Deck_1.json")));
         player2.setDeck(PokemonCardParser.getAllAttributes(new File("src/main/resources/data/Deck_2.json")));
 
-        playerList = new ArrayList<>();
-        playerList.add(player1);
-        playerList.add(player2);
-
+        activePlayer = player1;
+        waitingPlayer = player2;
     }
 
-
-
-    public ArrayList<Player> getPlayerList() {
-        return playerList;
+    public static void changeActivePlayer() {
+        Player tempPlayer = activePlayer;
+        activePlayer = waitingPlayer;
+        waitingPlayer = tempPlayer;
     }
 
-    public static void setPlayerList(ArrayList<Player> playerList) {
-        Game.playerList = playerList;
+    public static Player getActivePlayer() {
+        return activePlayer;
     }
+
+    public void setActivePlayer(Player activePlayer) {
+        Game.activePlayer = activePlayer;
+    }
+
+    public static Player getWaitingPlayer() {
+        return waitingPlayer;
+    }
+
+    public void setWaitingPlayer(Player waitingPlayer) {
+        Game.waitingPlayer = waitingPlayer;
+    }
+
 }

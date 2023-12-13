@@ -9,8 +9,6 @@ import java.util.Set;
 public class GameState {
 
     private AbstractState currentState;
-    private Player playerTurn;
-    private Player nonPlayerTurn;
     private static Set<FlagEvent> flagEventList;
     private Player winner;
 

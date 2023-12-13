@@ -65,9 +65,8 @@ public class Main extends Application {
                 throw new IllegalStateException("GameController is null after FXML load.");
             }
 
-            for (Player player : game.getPlayerList()) {
-                player.setGameController(gameController);
-            }
+            Game.getActivePlayer().setGameController(gameController);
+            Game.getWaitingPlayer().setGameController(gameController);
 
         } catch (IOException e) {
             throw new RuntimeException(e);

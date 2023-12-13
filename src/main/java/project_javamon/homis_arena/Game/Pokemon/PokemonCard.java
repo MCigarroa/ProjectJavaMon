@@ -32,9 +32,7 @@ public class PokemonCard extends Card {
     public void addEnergy(EnergyCard energyCard) {
         energyBanked.put(energyCard.getType(), energyBanked.get(energyCard.getType() + 1));
     }
-    public void energyConsumed(Attack attack) {
-        HashMap<String, Integer> energyCost = attack.getEnergyCost();
-
+    public void energyConsumed(HashMap<String, Integer> energyCost) {
         for (HashMap.Entry<String, Integer> costEntry : energyCost.entrySet()) {
             String energyType = costEntry.getKey();
             int costAmount = costEntry.getValue();

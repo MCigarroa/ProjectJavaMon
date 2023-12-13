@@ -1,7 +1,7 @@
 [
   {
     "attackName": "ember",
-    "energyCost":{ "fire":1, "Colorless":1 },
+    "energyCost":{ "fire":1, "colorless":1 },
     "dmg": 30,
     "extraAction": "discard 1 fire energy"
   },

@@ -1,19 +1,13 @@
 package project_javamon.homis_arena.Game;
 
 import javafx.collections.ObservableList;
-import javafx.collections.ListChangeListener;
 import javafx.collections.FXCollections;
 import project_javamon.homis_arena.Controller.GameController;
 import project_javamon.homis_arena.Game.Pokemon.Card;
-import project_javamon.homis_arena.Game.Pokemon.EnergyCard;
 import project_javamon.homis_arena.Main;
 import project_javamon.homis_arena.Util.CardPosition;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public class Player {
     static int playerNumber = 1;
@@ -32,14 +26,12 @@ public class Player {
         playerNumber++;
     }
 
-    public Card drawCard(){
+    public void drawCard(){
         if ( deck != null && !deck.isEmpty()){
             Card card = deck.removeLast();
             card.setCardPositions(CardPosition.HAND);
             hand.add(card);
-            return card;
         }
-        return null;
     }
 
 
@@ -157,20 +149,5 @@ public class Player {
     public void setGameController(GameController gameController) {
         System.out.println("Setting GameController in Player: " + gameController);
         this.gameController = gameController;
-        //setupHandListener();
-    }
-
-    private void setupHandListener() {
-        this.hand.addListener((ListChangeListener<Card>) change -> {
-            while (change.next()) {
-                if (change.wasAdded() || change.wasRemoved()) {
-                    if (gameController != null) {
-                        gameController.updateHandUI();
-                    } else {
-                        System.out.println("Error: GameController is null when trying to update UI");
-                    }
-                }
-            }
-        });
     }
 }

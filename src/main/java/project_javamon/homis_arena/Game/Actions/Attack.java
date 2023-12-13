@@ -33,17 +33,16 @@ public class Attack implements IAction{
     public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
         System.out.println("Attack Attempt");
         if (canAfford(cardAttacking)){
-            if (cardDefending instanceof PokemonCard) {
-                ((PokemonCard) cardDefending).setHp(((PokemonCard) cardDefending).getHp() - dmg);
-                if (((PokemonCard) cardDefending).getHp() <= 0) {
-                    playerDefending.getDiscard().add(cardDefending);
-                    playerDefending.getActive().remove(cardDefending);
-                    cardDefending.setFormerCardPosition(cardDefending.getCardPosition());
-                    cardDefending.setCardPositions(CardPosition.DISCARD);
-                    System.out.println("POW KILLED IT");
-                }
-                System.out.println("POW HIT IT FOR " + dmg);
+            cardDefending.setHp(cardDefending.getHp() - dmg);
+            if (cardDefending.getHp() <= 0) {
+                playerDefending.getDiscard().add(cardDefending); // updates UI
+                playerDefending.getActive().remove(cardDefending); // updates UI
+                cardDefending.setFormerCardPosition(cardDefending.getCardPosition());
+                cardDefending.setCardPositions(CardPosition.DISCARD);
+                System.out.println("POW KILLED IT");
             }
+            System.out.println("POW HIT IT FOR " + dmg);
+            cardAttacking.energyConsumed(energyCost);
         } else {
             System.out.println("Can't Afford Attack");
         }

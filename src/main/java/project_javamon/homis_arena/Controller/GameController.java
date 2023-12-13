@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,15 +20,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import project_javamon.homis_arena.Game.Actions.Attack;
-import project_javamon.homis_arena.Game.Actions.IAction;
 import project_javamon.homis_arena.Game.Game;
 import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.Card;
+import project_javamon.homis_arena.Game.Pokemon.EnergyCard;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Main;
 import project_javamon.homis_arena.Util.CardPosition;
-import project_javamon.homis_arena.Game.States.FlagEvent;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
 
@@ -63,9 +61,6 @@ public class GameController implements Initializable {
     ArrayList<Node> northMat;
     ArrayList<Node> southMat;
 
-    Game game = Main.getGame();
-    GameState gameState = Main.getGameState();
-
     private ArrayList<Player> playerList;
 
     @Override
@@ -74,15 +69,12 @@ public class GameController implements Initializable {
         initMat();
         System.out.println("Mat initialized");
 
-
-
-        Player player1 = game.getPlayerList().get(0);
-        bindPlayerToUI(player1);
-        Player player2 = game.getPlayerList().get(1);
-        bindPlayerToUI(player2);
+        bindPlayerToUI(Game.getActivePlayer());
+        bindPlayerToUI(Game.getWaitingPlayer());
     }
 
     private void bindPlayerToUI(Player player) {
+        // Applies listeners to any changes to the arrays, calling their respective UI updates
         player.getHand().addListener((ListChangeListener.Change<? extends Card> change) -> {
             updateHandUI(player.getHand());
         });
@@ -101,66 +93,66 @@ public class GameController implements Initializable {
     }
 
     private void updateBenchUI(ObservableList<Card> discard) {
-        updateUI();
-        // We don't really have a special UI effect for this
+
     }
 
     private void updateDiscardUI(ObservableList<Card> discard) {
-        updateUI();
+        southDiscard.getChildren().clear();
+        populateContainerFromList(southDiscard, discard);
         // We don't really have a special UI effect for this
     }
 
     private void updatePrizeUI(ObservableList<Card> prize) {
-        updateUI();
+        southPrize.getChildren().clear();
+        populateContainerFromList(southPrize, prize);
         // We don't really have a special UI effect for this
     }
 
 
     private void updateActiveUI(ObservableList<Card> hand) {
-        updateUI();
+        southActive.getChildren().clear();
+        populateContainerFromList(southActive, hand);
         updateActiveSpacing(southActive);
-
     }
 
     private void updateHandUI(ObservableList<Card> hand) {
-        updateUI();
-        updateHandUI();
+        // extremely expensive once hand has 30+ cards // fixed: still lags at 50, but much better
+        southHand.getChildren().clear();
+        populateContainerFromList(southHand, hand);
+        updateCardHandSpacing(southHand);
+        //updateUI();
     }
 
     public void initMat(){
-        // TODO Logic to determine what cards go in needed
-
-
         initDeck(northDeck, CardPosition.DECK);
         initDeck(southDeck,CardPosition.DECK);
-        fillPrize(northPrize, CardPosition.PRIZE);
-        fillPrize(southPrize,CardPosition.PRIZE);
-        southPrize.setSpacing(-100);
-        fillActive(northActive,CardPosition.ACTIVE);
-        fillActive(southActive,CardPosition.ACTIVE);
-        fillDiscard(northDiscard,CardPosition.DISCARD);
-        fillDiscard(southDiscard,CardPosition.DISCARD);
-        fillBench(northBench,CardPosition.BENCH);
-        fillBench(southBench,CardPosition.BENCH);
+        initPrize(northPrize);
+        initPrize(southPrize);
+        initActive(northActive);
+        initActive(southActive);
+        initDiscard(northDiscard);
+        initDiscard(southDiscard);
+        initBench(northBench);
+        initBench(southBench);
 
-        generateSouthCardHand();
-        generateNorthCardHand();
+        initSouthCardHand();
+        initNorthCardHand();
 
         northMat = new ArrayList<>(Arrays.asList(northBench, northActive, northPrize, northDiscard, northDeck, northHand));
         southMat = new ArrayList<>(Arrays.asList(southBench, southActive, southPrize, southDiscard, southDeck, southHand));
 
-        Collections.shuffle(game.getPlayerList().get(0).getDeck());
-        Collections.shuffle(game.getPlayerList().get(1).getDeck());
+        Collections.shuffle(Game.getActivePlayer().getDeck());
+        Collections.shuffle(Game.getWaitingPlayer().getDeck());
     }
 
 
-    // TODO move card to hand, send to discard, faced down prize, restrictionNotification, players not able to interact with other-side card,
-    // TODO coin flip ui, UI damage tracker / status,
+    // TODO move card to hand, send to discard, , restrictionNotification, players not able to interact with other-side card,
+    // TODO UI damage tracker / status,
 
     // Button Actions ===============================
     @FXML
     public void onSouthDeckClicked() {
-        Player currentPlayer = game.getPlayerList().get(0);
+        Player currentPlayer = Game.getActivePlayer();
         currentPlayer.drawCard();
         currentPlayer.printPlayerCards();
     }
@@ -196,24 +188,13 @@ public class GameController implements Initializable {
     }
 
     private void switchPlayers() {
-        printMatContents("Before switch - NorthMat: ", northMat);
-        printMatContents("Before switch - SouthMat: ", southMat);
-        Collections.reverse(game.getPlayerList());
-//        No longer needed due
-//        ArrayList<Node> tempSouthContent = new ArrayList<>();
-//        tempSouthContent.addAll(southMat);
-//        southMat.clear();
-//        southMat.addAll(northMat);
-//        northMat.clear();
-//        northMat.addAll(tempSouthContent);
+        Game.changeActivePlayer();
         updateUI();
-        printMatContents("After switch - NorthMat: ", northMat);
-        printMatContents("After switch - SouthMat: ", southMat);
     }
 
     // Button Actions END ===========================
     // Listeners ====================================
-    private void setupDropZone(Pane pane, CardPosition cardPosition) {
+    private void setupDropZone(Pane pane) {
         pane.setOnDragOver(event -> {
             if (event.getGestureSource() != pane && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
@@ -224,7 +205,7 @@ public class GameController implements Initializable {
             Dragboard db = event.getDragboard();
             boolean success = false;
 
-            // This should prevent card from moving to the north,
+            // This should prevent card from moving to the north mat,
             // but it is just causing them to disappear
             if (pane.getLayoutY() < gameMat.getLayoutY() / 2) {
                 return;
@@ -234,10 +215,6 @@ public class GameController implements Initializable {
                 String cardId = db.getString();
                 moveCardToLocation(cardId, pane);
 
-                // Hack to get active to rotate properly
-                if (pane.equals(southActive)) {
-                    updateActiveSpacing((HBox) pane);
-                }
                 success = true;
             }
 
@@ -250,23 +227,22 @@ public class GameController implements Initializable {
         System.out.println("Moving card with ID: " + cardId + " to new location: " + newLocation);
 
         Card card = findCardById(cardId);
-        Player currentPlayer = game.getPlayerList().get(0);
+        Player currentPlayer = Game.getActivePlayer();
 
-        currentPlayer.RemoveFromPrevious(card, determineCardPosition(newLocation));
-        updatePlayerListWithNewCardLocation(currentPlayer, card, newLocation);
-
-        ImageView cardView = findCardViewById(cardId);
-        if (cardView != null) {
-            Pane currentParent = (Pane) cardView.getParent();
-            if (currentParent != null) {
-                currentParent.getChildren().remove(cardView);
-            }
-            newLocation.getChildren().add(cardView);
+        // Expensive operation ===============================================================
+        // I don't want to mess with it atm, it calls 5 UI updates
+        // Fixed to call only 2 times :)
+        if (newLocation.equals(southActive) && card instanceof EnergyCard) {
+            currentPlayer.getDiscard().add(card); //updateCall
+            currentPlayer.getActive().remove(card); //updateCall
+            PokemonCard pokemonCard = (PokemonCard) currentPlayer.getActive().get(0);
+            pokemonCard.addEnergy((EnergyCard) card);
+            pokemonCard.setCardPositions(CardPosition.DISCARD);
         } else {
-            System.out.println("Error: CardView not found for card ID: " + cardId);
+            currentPlayer.RemoveFromPrevious(card, determineCardPosition(newLocation)); //updateCall
+            updatePlayerListWithNewCardLocation(currentPlayer, card, newLocation); //updateCall
         }
-
-        updateUI();
+        // Expensive operation END============================================================
     }
 
     private CardPosition determineCardPosition(Pane newLocation) {
@@ -290,7 +266,10 @@ public class GameController implements Initializable {
     }
 
     public void updateUI() {
+        System.out.println("Updating UI");
         // Updates every location with cards from player
+        // Very brute, much performance eater
+        // Simplifies updates tho
         southHand.getChildren().clear();
         southBench.getChildren().clear();
         southActive.getChildren().clear();
@@ -302,23 +281,27 @@ public class GameController implements Initializable {
         northPrize.getChildren().clear();
         northDiscard.getChildren().clear();
 
-        populateContainerFromList(southHand, game.getPlayerList().get(0).getHand());
-        populateContainerFromList(southBench, game.getPlayerList().get(0).getBench());
-        populateContainerFromList(southActive, game.getPlayerList().get(0).getActive());
-        populateContainerFromList(southPrize, game.getPlayerList().get(0).getPrize());
-        populateContainerFromList(southDiscard, game.getPlayerList().get(0).getDiscard());
-        populateContainerFromList(northHand, game.getPlayerList().get(1).getHand());
-        populateContainerFromList(northBench, game.getPlayerList().get(1).getBench());
-        populateContainerFromList(northActive, game.getPlayerList().get(1).getActive());
-        populateContainerFromList(northPrize, game.getPlayerList().get(1).getPrize());
-        populateContainerFromList(northDiscard, game.getPlayerList().get(1).getDiscard());
+        Player player1 = Game.getActivePlayer();
+        Player player2 = Game.getWaitingPlayer();
+
+        populateContainerFromList(southHand, player1.getHand());
+        populateContainerFromList(southBench, player1.getBench());
+        populateContainerFromList(southActive, player1.getActive());
+        populateContainerFromList(southPrize, player1.getPrize());
+        populateContainerFromList(southDiscard, player1.getDiscard());
+        populateContainerFromList(northHand, player2.getHand());
+        populateContainerFromList(northBench, player2.getBench());
+        populateContainerFromList(northActive, player2.getActive());
+        populateContainerFromList(northPrize, player2.getPrize());
+        populateContainerFromList(northDiscard, player2.getDiscard());
 
         updateActiveSpacing(southActive);
-        updateActiveSpacing(northActive);
+        //updateActiveSpacing(northActive);
         updateHandUI();
     }
 
     private void populateContainerFromList(Pane container, ObservableList<Card> cardList) {
+        // Expensive operation but simplifies updates
         for (Card card : cardList) {
             ImageView cardView;
             // Cards that should face down get backCard assignment
@@ -336,8 +319,7 @@ public class GameController implements Initializable {
     }
 
     public Card findCardById(String cardId) {
-        Player player = game.getPlayerList().get(0);
-        return player.findCardById(cardId);
+        return Game.getActivePlayer().findCardById(cardId);
     }
 
     private void enableDragAndDrop(ImageView cardView) {
@@ -368,28 +350,21 @@ public class GameController implements Initializable {
         });
     }
     // Listeners End ================================
-    private void generateSouthCardHand() {
+    private void initSouthCardHand() {
         southHand = new HBox();
         southHand.setLayoutX(gameMat.getPrefWidth() /  2);
         southHand.setLayoutY(gameMat.getPrefHeight() - 150);
         gameMat.getChildren().add(southHand);
     }
-    private void generateNorthCardHand() {
+    private void initNorthCardHand() {
         northHand = new HBox();
-        northHand.setLayoutX(gameMat.getPrefWidth() /  2);
-        northHand.setLayoutY(0);
+        northHand.setLayoutX(gameMat.getPrefWidth() /  3);
+        northHand.setLayoutY(-100);
         gameMat.getChildren().add(northHand);
     }
 
-    private void updateDeckUI(VBox southDeck) {
-        if (!southDeck.getChildren().isEmpty()) {
-            updateCardHandSpacing(southHand);
-        }
-    }
-
     public void initDeck(VBox deck, CardPosition cardPosition) {
-        // TODO Will need to get players custom deck
-        Player player = game.getPlayerList().get(0);
+        Player player = Game.getActivePlayer();
 
         if (player.getDeck() == null) {
             System.out.println("Deck is null.");
@@ -409,31 +384,31 @@ public class GameController implements Initializable {
         deck.setSpacing(-200);
         deck.setBackground(Background.fill(Color.BLACK));
     }
-    private void fillPrize(HBox prize, CardPosition cardPosition) {
+    private void initPrize(HBox prize) {
         initBox(prize);
-        setupDropZone(prize, cardPosition);
+        prize.setSpacing(-100);
+        setupDropZone(prize);
     }
 
-    private void fillActive(HBox active, CardPosition cardPosition) {
+    private void initActive(HBox active) {
         initBox(active);
-        setupDropZone(active, cardPosition);
+        setupDropZone(active);
     }
-    private void fillDiscard(VBox discard, CardPosition cardPosition) {
+    private void initDiscard(VBox discard) {
         initBox(discard);
         discard.setSpacing(-200);
-        setupDropZone(discard, cardPosition);
+        setupDropZone(discard);
     }
 
     private void initBox(Pane active) {
         active.getChildren().clear();
         if (active.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(active);
-        //active.setBackground(Background.fill(Color.BLACK));
     }
-    private void fillBench(HBox bench, CardPosition cardPosition){
+    private void initBench(HBox bench){
         bench.getChildren().clear();
         if (bench.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(bench);
         bench.setSpacing(5);
-        setupDropZone(bench, cardPosition);
+        setupDropZone(bench);
     }
 
 
@@ -457,7 +432,7 @@ public class GameController implements Initializable {
         if (totalCardWidth > 1400) {
             double excessWidth = totalCardWidth - 1400;
             // This controls how much it compresses: 100 ATM it is too jaring
-            double reductionPerCard = Math.max(excessWidth / numberOfCards, 30);
+            double reductionPerCard = Math.max(excessWidth / numberOfCards, 25);
             cardSpacing -= reductionPerCard;
             totalCardWidth = (cardWidth * numberOfCards) + (cardSpacing * (numberOfCards - 1));
         }
@@ -491,10 +466,10 @@ public class GameController implements Initializable {
         contextMenu.getItems().add(attackEmber);
         attackEmber.setOnAction(event -> {
             new Attack("Ember",new HashMap<>(Map.of("fire",1,"colorless",1)),100,"nada").TakeAction(
-                    game.getPlayerList().get(0).getActive().get(0),
-                    game.getPlayerList().get(0).getActive().get(1),
-                    game.getPlayerList().get(0),
-                    game.getPlayerList().get(1)
+                    (PokemonCard) Game.getActivePlayer().getActive().get(0),
+                    (PokemonCard) Game.getWaitingPlayer().getActive().get(0),
+                    Game.getActivePlayer(),
+                    Game.getWaitingPlayer()
             );
         });
 
@@ -508,7 +483,7 @@ public class GameController implements Initializable {
     }
 
     private void menuActionsGenerator(ContextMenu contextMenu, ImageView cardView) {
-         Card card = game.getPlayerList().get(0).findCardById((String) cardView.getProperties().get("cardId"));
+         Card card = Game.getActivePlayer().findCardById((String) cardView.getProperties().get("cardId"));
 
          if ( card.getCardPosition() != CardPosition.ACTIVE && !(card instanceof PokemonCard)) {
              return;
@@ -590,7 +565,7 @@ public class GameController implements Initializable {
 
     public void updateHandUI() {
         southHand.getChildren().clear();
-        for (Card card : game.getPlayerList().get(0).getHand()) {
+        for (Card card : Game.getActivePlayer().getHand()) {
             ImageView cardView = createCardImageView(card);
             southHand.getChildren().add(cardView);
             updateCardHandSpacing(southHand);
@@ -619,7 +594,7 @@ public class GameController implements Initializable {
     private void coinFlip() {
         // This creates a pane that allows for coin flips
         StackPane coinPane = new StackPane();
-        coinPane.setStyle("-fx-background-color: rgba(0, 0, 0, 1);-fx-alignment: center;");
+        coinPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0);-fx-alignment: center;");
         coinPane.setPrefSize(gameMat.getWidth() / 3, gameMat.getHeight() / 3);
         coinPane.setLayoutX(gameMat.getPrefWidth() / 2);
         coinPane.setLayoutY(gameMat.getPrefHeight() / 2);
@@ -627,13 +602,13 @@ public class GameController implements Initializable {
         ImageView coinView = new ImageView(homi);
         setCardHeightAndWidth(coinView);
         Button flipButton = new Button("Flip Coin");
-        flipButton.setTranslateY(-200);
+        flipButton.setTranslateY(80);
         flipButton.setOnAction(e -> {
             flipCoin(coinView, homi, backCard);
         });
 
         Button exitFlipButton = new Button("Exit");
-        exitFlipButton.setTranslateY(200);
+        exitFlipButton.setTranslateY(100);
         exitFlipButton.setOnAction(e-> gameMat.getChildren().remove(coinPane));
 
         coinPane.getChildren().add(exitFlipButton);
@@ -655,11 +630,10 @@ public class GameController implements Initializable {
         rt.setByAngle(360 * 3); // Rotate three times
         rt.setOnFinished(e -> {
             // Randomly choose heads or tails at the end of the animation
+            // Need way to send bool for game logic
             coinView.setImage(random.nextBoolean() ? homi : backCard);
         });
         rt.play();
-        Button flipButton = new Button("Flip Coin");
-
     }
 
     // Coin Flip =======================================================================================
