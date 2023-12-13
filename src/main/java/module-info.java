@@ -20,4 +20,6 @@ module project_javamon.homis_arena {
     exports project_javamon.homis_arena;
     exports project_javamon.homis_arena.Controller;
     opens project_javamon.homis_arena.Controller to javafx.fxml;
+    exports project_javamon.homis_arena.Game.States to com.google.gson;
+    opens project_javamon.homis_arena.Game.States to com.google.gson;
 }

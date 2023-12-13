@@ -23,7 +23,7 @@ public class Game {
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
-        Main.getGameState().setCurrentState(GameState.INITIAL_START);
+
     }
 
 

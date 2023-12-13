@@ -48,4 +48,5 @@ public abstract class Card {
     public String toString() {
         return "Name: " + name + " CardID: " + cardID + " CardPosition: " + cardPosition;
     }
+
 }

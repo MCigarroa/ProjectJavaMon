@@ -1,5 +1,9 @@
 package project_javamon.homis_arena.Game.Pokemon;
 
+import project_javamon.homis_arena.Game.Actions.IAction;
+
+import java.util.ArrayList;
+
 public class PokemonCard extends Card {
     private String type;
     private int hp;
@@ -8,6 +12,7 @@ public class PokemonCard extends Card {
     private int retreatCost;
     private String previousStage;
     private String nextStage;
+    private transient ArrayList<IAction> iAction;
 
 
     public PokemonCard() {
@@ -68,5 +73,13 @@ public class PokemonCard extends Card {
 
     public void setNextStage(String nextStage) {
         this.nextStage = nextStage;
+    }
+
+    public ArrayList<IAction> getiAction() {
+        return iAction;
+    }
+
+    public void setiAction(ArrayList<IAction> iAction) {
+        this.iAction = iAction;
     }
 }

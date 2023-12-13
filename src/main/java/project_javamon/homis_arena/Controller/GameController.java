@@ -1,5 +1,6 @@
 package project_javamon.homis_arena.Controller;
 
+import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
@@ -8,7 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,13 +19,17 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
+import javafx.util.Duration;
+import project_javamon.homis_arena.Game.Actions.Attack;
+import project_javamon.homis_arena.Game.Actions.IAction;
 import project_javamon.homis_arena.Game.Game;
 import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.Card;
+import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Main;
 import project_javamon.homis_arena.Util.CardPosition;
-import project_javamon.homis_arena.Util.FlagEvent;
+import project_javamon.homis_arena.Game.States.FlagEvent;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
 
@@ -48,8 +53,10 @@ public class GameController implements Initializable {
 
     public Button showHandBtn;
     public Button endTurnBtn;
+    public Button coinFlipBtn;
 
     Image backCard = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/cardback.jpg")));
+    Image homi = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/homi-poki.jpg")));
     HBox southHand;
     HBox northHand;
 
@@ -59,7 +66,7 @@ public class GameController implements Initializable {
     Game game = Main.getGame();
     GameState gameState = Main.getGameState();
 
-    private List<Player> playerList;
+    private ArrayList<Player> playerList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,8 +74,7 @@ public class GameController implements Initializable {
         initMat();
         System.out.println("Mat initialized");
 
-        Game game = Main.getGame();
-        GameState gameState = Main.getGameState();
+
 
         Player player1 = game.getPlayerList().get(0);
         bindPlayerToUI(player1);
@@ -83,29 +89,45 @@ public class GameController implements Initializable {
         player.getActive().addListener((ListChangeListener.Change<? extends Card> change) -> {
             updateActiveUI(player.getActive());
         });
-//        player.getPrize().addListener((ListChangeListener.Change<? extends Card> change) -> {
-//            updatePrizeUI(player.getHand());
-//        });
-//        player.getDiscard().addListener((ListChangeListener.Change<? extends Card> change) -> {
-//            updateDiscardUI(player.getHand());
-//        });
-//        player.getDiscard().addListener((ListChangeListener.Change<? extends Card> change) -> {
-//            updateDiscardUI(player.getHand());
-//        });
+        player.getPrize().addListener((ListChangeListener.Change<? extends Card> change) -> {
+            updatePrizeUI(player.getPrize());
+        });
+        player.getDiscard().addListener((ListChangeListener.Change<? extends Card> change) -> {
+            updateDiscardUI(player.getDiscard());
+        });
+        player.getBench().addListener((ListChangeListener.Change<? extends Card> change) -> {
+            updateBenchUI(player.getBench());
+        });
+    }
+
+    private void updateBenchUI(ObservableList<Card> discard) {
+        updateUI();
+        // We don't really have a special UI effect for this
+    }
+
+    private void updateDiscardUI(ObservableList<Card> discard) {
+        updateUI();
+        // We don't really have a special UI effect for this
+    }
+
+    private void updatePrizeUI(ObservableList<Card> prize) {
+        updateUI();
+        // We don't really have a special UI effect for this
     }
 
 
     private void updateActiveUI(ObservableList<Card> hand) {
+        updateUI();
         updateActiveSpacing(southActive);
+
     }
 
     private void updateHandUI(ObservableList<Card> hand) {
-        updateSouthCardHand();
-        updateCardHandSpacing(southHand);
+        updateUI();
+        updateHandUI();
     }
 
     public void initMat(){
-        // All do the same just needed to fill up the boxes for alignment checks
         // TODO Logic to determine what cards go in needed
 
 
@@ -128,10 +150,10 @@ public class GameController implements Initializable {
         southMat = new ArrayList<>(Arrays.asList(southBench, southActive, southPrize, southDiscard, southDeck, southHand));
 
         Collections.shuffle(game.getPlayerList().get(0).getDeck());
+        Collections.shuffle(game.getPlayerList().get(1).getDeck());
     }
 
-    private void fillDiscard(VBox northDiscard, CardPosition cardPosition) {
-    }
+
     // TODO move card to hand, send to discard, faced down prize, restrictionNotification, players not able to interact with other-side card,
     // TODO coin flip ui, UI damage tracker / status,
 
@@ -139,9 +161,7 @@ public class GameController implements Initializable {
     @FXML
     public void onSouthDeckClicked() {
         Player currentPlayer = game.getPlayerList().get(0);
-        if (!GameState.getFlagEventList().contains(FlagEvent.PLAYER_CAN_DRAW_FROM_DECK)){
-            currentPlayer.drawCard();
-        }
+        currentPlayer.drawCard();
         currentPlayer.printPlayerCards();
     }
     @FXML
@@ -149,7 +169,7 @@ public class GameController implements Initializable {
         if (southHand.getLayoutY() == gameMat.getPrefHeight() - 150){
             southHand.setLayoutY(gameMat.getPrefHeight()- 300);
         } else {
-            southHand.setLayoutY(gameMat.getPrefHeight()- 150);
+            southHand.setLayoutY(gameMat.getPrefHeight()- 100);
         }
     }
     @FXML
@@ -179,13 +199,13 @@ public class GameController implements Initializable {
         printMatContents("Before switch - NorthMat: ", northMat);
         printMatContents("Before switch - SouthMat: ", southMat);
         Collections.reverse(game.getPlayerList());
-
-        ArrayList<Node> tempSouthContent = new ArrayList<>();
-        tempSouthContent.addAll(southMat);
-        southMat.clear();
-        southMat.addAll(northMat);
-        northMat.clear();
-        northMat.addAll(tempSouthContent);
+//        No longer needed due
+//        ArrayList<Node> tempSouthContent = new ArrayList<>();
+//        tempSouthContent.addAll(southMat);
+//        southMat.clear();
+//        southMat.addAll(northMat);
+//        northMat.clear();
+//        northMat.addAll(tempSouthContent);
         updateUI();
         printMatContents("After switch - NorthMat: ", northMat);
         printMatContents("After switch - SouthMat: ", southMat);
@@ -204,10 +224,15 @@ public class GameController implements Initializable {
             Dragboard db = event.getDragboard();
             boolean success = false;
 
+            // This should prevent card from moving to the north,
+            // but it is just causing them to disappear
+            if (pane.getLayoutY() < gameMat.getLayoutY() / 2) {
+                return;
+            }
             if (db.hasString()) {
                 // Gets ID
                 String cardId = db.getString();
-                moveCardToLocation(cardId,pane);
+                moveCardToLocation(cardId, pane);
 
                 // Hack to get active to rotate properly
                 if (pane.equals(southActive)) {
@@ -215,6 +240,7 @@ public class GameController implements Initializable {
                 }
                 success = true;
             }
+
             event.setDropCompleted(success);
             event.consume();
         });
@@ -264,6 +290,7 @@ public class GameController implements Initializable {
     }
 
     public void updateUI() {
+        // Updates every location with cards from player
         southHand.getChildren().clear();
         southBench.getChildren().clear();
         southActive.getChildren().clear();
@@ -294,16 +321,16 @@ public class GameController implements Initializable {
     private void populateContainerFromList(Pane container, ObservableList<Card> cardList) {
         for (Card card : cardList) {
             ImageView cardView;
+            // Cards that should face down get backCard assignment
             if (container.equals(southPrize) || container.equals(southDiscard) || container.equals(northPrize) ||
                     container.equals(northHand) || container.equals(northDiscard)){
                 cardView = new ImageView(backCard);
                 setCardHeightAndWidth(cardView);
                 addDragAndDropCapability(cardView, card);
-                setUpContextMenuWithPopUp(cardView);
+                
             } else {
                 cardView = createCardImageView(card);
             }
-
             container.getChildren().add(cardView);
         }
     }
@@ -391,8 +418,13 @@ public class GameController implements Initializable {
         initBox(active);
         setupDropZone(active, cardPosition);
     }
+    private void fillDiscard(VBox discard, CardPosition cardPosition) {
+        initBox(discard);
+        discard.setSpacing(-200);
+        setupDropZone(discard, cardPosition);
+    }
 
-    private void initBox(HBox active) {
+    private void initBox(Pane active) {
         active.getChildren().clear();
         if (active.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(active);
         //active.setBackground(Background.fill(Color.BLACK));
@@ -453,6 +485,18 @@ public class GameController implements Initializable {
 
     private void setUpContextMenuWithPopUp(ImageView cardView) {
         ContextMenu contextMenu = new ContextMenu();
+
+        //menuActionsGenerator(contextMenu, cardView);
+        MenuItem attackEmber = new MenuItem("ember");
+        contextMenu.getItems().add(attackEmber);
+        attackEmber.setOnAction(event -> {
+            new Attack("Ember",new HashMap<>(Map.of("fire",1,"colorless",1)),100,"nada").TakeAction(
+                    game.getPlayerList().get(1).getActive().get(0),
+                    game.getPlayerList().get(0),
+                    game.getPlayerList().get(1)
+            );
+        });
+
         MenuItem viewLargeItem = new MenuItem("View Large");
         contextMenu.getItems().add(viewLargeItem);
 
@@ -460,6 +504,18 @@ public class GameController implements Initializable {
 
         cardView.setOnContextMenuRequested(event ->
                 contextMenu.show(cardView, event.getScreenX(), event.getScreenY()));
+    }
+
+    private void menuActionsGenerator(ContextMenu contextMenu, ImageView cardView) {
+         Card card = game.getPlayerList().get(0).findCardById((String) cardView.getProperties().get("cardId"));
+
+         if ( card.getCardPosition() != CardPosition.ACTIVE && !(card instanceof PokemonCard)) {
+             return;
+         }
+
+
+
+
     }
 
     private void setCardPopupEffects(ImageView cardView) {
@@ -556,16 +612,55 @@ public class GameController implements Initializable {
         return imageView;
     }
 
-    private void updateSouthCardHand() {
-        southHand.getChildren().clear();
-        for (Card card : game.getPlayerList().get(0).getHand()) {
-            ImageView cardView = createCardImageView(card);
-            southHand.getChildren().add(cardView);
-            updateCardHandSpacing(southHand);
-        }
+    // Utility END =====================================================================================
+    // Coin Flip END====================================================================================
+    @FXML
+    private void coinFlip() {
+        // This creates a pane that allows for coin flips
+        StackPane coinPane = new StackPane();
+        coinPane.setStyle("-fx-background-color: rgba(0, 0, 0, 1);-fx-alignment: center;");
+        coinPane.setPrefSize(gameMat.getWidth() / 3, gameMat.getHeight() / 3);
+        coinPane.setLayoutX(gameMat.getPrefWidth() / 2);
+        coinPane.setLayoutY(gameMat.getPrefHeight() / 2);
+
+        ImageView coinView = new ImageView(homi);
+        setCardHeightAndWidth(coinView);
+        Button flipButton = new Button("Flip Coin");
+        flipButton.setTranslateY(-200);
+        flipButton.setOnAction(e -> {
+            flipCoin(coinView, homi, backCard);
+        });
+
+        Button exitFlipButton = new Button("Exit");
+        exitFlipButton.setTranslateY(200);
+        exitFlipButton.setOnAction(e-> gameMat.getChildren().remove(coinPane));
+
+        coinPane.getChildren().add(exitFlipButton);
+        StackPane.setAlignment(coinPane, Pos.CENTER);
+
+        coinPane.getChildren().add(coinView);
+        StackPane.setAlignment(coinView, Pos.CENTER);
+
+        coinPane.getChildren().add(flipButton);
+        StackPane.setAlignment(flipButton, Pos.CENTER);
+
+        gameMat.getChildren().add(coinPane);
+        StackPane.setAlignment(coinPane, Pos.CENTER);
     }
 
-    // Utility END =====================================================================================
+    private void flipCoin(ImageView coinView, Image homi, Image backCard) {
+        Random random = new Random();
+        RotateTransition rt = new RotateTransition(Duration.seconds(1), coinView);
+        rt.setByAngle(360 * 3); // Rotate three times
+        rt.setOnFinished(e -> {
+            // Randomly choose heads or tails at the end of the animation
+            coinView.setImage(random.nextBoolean() ? homi : backCard);
+        });
+        rt.play();
+        Button flipButton = new Button("Flip Coin");
 
+    }
+
+    // Coin Flip =======================================================================================
 
 }

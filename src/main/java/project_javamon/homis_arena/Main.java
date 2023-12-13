@@ -23,7 +23,7 @@ import java.util.Objects;
 public class Main extends Application {
     private static GameState gameState;
     private static Game game;
-    private static GameController gameController;
+    public static GameController gameController;
 
 
     public static void main(String[] args) { launch(); }

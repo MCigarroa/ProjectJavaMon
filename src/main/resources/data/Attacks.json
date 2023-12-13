@@ -1,0 +1,14 @@
+[
+  {
+    "attackName": "ember",
+    "energyCost":{ "fire":1, "Colorless":1 },
+    "dmg": 30,
+    "extraAction": "discard 1 fire energy"
+  },
+  {
+    "attackName": "fire spin",
+    "energyCost": { "fire": 4 },
+    "dmg": 100,
+    "extraAction": "discard 2 any type of energy"
+  }
+]
