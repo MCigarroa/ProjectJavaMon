@@ -30,16 +30,16 @@ public class Attack implements IAction{
     }
 
     @Override
-    public void TakeAction(Card card, Player playerAttacking, Player playerDefending) {
+    public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
         System.out.println("Attack Attempt");
-        if (canAfford(playerAttacking)){
-            if (card instanceof PokemonCard) {
-                ((PokemonCard) card).setHp(((PokemonCard) card).getHp() - dmg);
-                if (((PokemonCard) card).getHp() <= 0) {
-                    playerDefending.getDiscard().add(card);
-                    playerDefending.getActive().remove(card);
-                    card.setFormerCardPosition(card.getCardPosition());
-                    card.setCardPositions(CardPosition.DISCARD);
+        if (canAfford(cardAttacking)){
+            if (cardDefending instanceof PokemonCard) {
+                ((PokemonCard) cardDefending).setHp(((PokemonCard) cardDefending).getHp() - dmg);
+                if (((PokemonCard) cardDefending).getHp() <= 0) {
+                    playerDefending.getDiscard().add(cardDefending);
+                    playerDefending.getActive().remove(cardDefending);
+                    cardDefending.setFormerCardPosition(cardDefending.getCardPosition());
+                    cardDefending.setCardPositions(CardPosition.DISCARD);
                     System.out.println("POW KILLED IT");
                 }
                 System.out.println("POW HIT IT FOR " + dmg);
@@ -49,8 +49,8 @@ public class Attack implements IAction{
         }
     }
 
-    private boolean canAfford(Player playerAttacking) {
-        return energyCost.equals(playerAttacking.getEnergyBanked());
+    private boolean canAfford(PokemonCard cardAttacking) {
+        return energyCost.equals(cardAttacking.getEnergyBanked());
     }
 
 

@@ -1,8 +1,10 @@
 package project_javamon.homis_arena.Game.Pokemon;
 
+import project_javamon.homis_arena.Game.Actions.Attack;
 import project_javamon.homis_arena.Game.Actions.IAction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PokemonCard extends Card {
     private String type;
@@ -13,11 +15,37 @@ public class PokemonCard extends Card {
     private String previousStage;
     private String nextStage;
     private transient ArrayList<IAction> iAction;
-
+    private transient HashMap<String, Integer> energyBanked;
+    private final transient String[] types = {"fire", "water", "grass", "colorless",
+            "psychic", "fighting", "darkness", "metal", "fairy"};
 
     public PokemonCard() {
         super();
+        this.energyBanked = new HashMap<>();
+        for (String type : types) {
+            energyBanked.put(type, 0);
+        }
     }
+    public HashMap<String, Integer> getEnergyBanked() {
+        return energyBanked;
+    }
+    public void addEnergy(EnergyCard energyCard) {
+        energyBanked.put(energyCard.getType(), energyBanked.get(energyCard.getType() + 1));
+    }
+    public void energyConsumed(Attack attack) {
+        HashMap<String, Integer> energyCost = attack.getEnergyCost();
+
+        for (HashMap.Entry<String, Integer> costEntry : energyCost.entrySet()) {
+            String energyType = costEntry.getKey();
+            int costAmount = costEntry.getValue();
+
+            int currentBanked = energyBanked.get(energyType);
+            int newBankedAmount = currentBanked - costAmount;
+
+            energyBanked.put(energyType, newBankedAmount);
+        }
+    }
+
 
     public String getType() {
         return type;

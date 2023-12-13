@@ -24,7 +24,6 @@ public class Player {
     private ObservableList<Card> active = FXCollections.observableArrayList();
     private ObservableList<Card> discard = FXCollections.observableArrayList();
     private ObservableList<Card> prize = FXCollections.observableArrayList();
-    private HashMap<String, Integer> energyBanked;
 
     GameController gameController = Main.getMainGameController();
 
@@ -127,30 +126,6 @@ public class Player {
 
     public ObservableList<Card> getPrize() {
         return prize;
-    }
-
-    private final String[] types = {"fire", "water", "grass", "colorless",
-            "psychic", "fighting", "darkness", "metal", "fairy"};
-    public HashMap<String, Integer> getEnergyBanked() {
-        // sums count of types to array, to perform attack
-        HashMap<String, Integer> typeCounts = new HashMap<>();
-        for (String type : types) {
-            typeCounts.put(type, 0);
-        }
-
-        for (Card card : active) {
-            if (card instanceof EnergyCard){
-                String type = ((EnergyCard) card).getType();
-                if (typeCounts.containsKey(type)) {
-                    typeCounts.put(type, typeCounts.get(type) + 1);
-                }
-            }
-        }
-        return typeCounts;
-    }
-
-    public void setEnergyBanked(HashMap<String, Integer> energyBanked) {
-        this.energyBanked = energyBanked;
     }
 
     // Utilities

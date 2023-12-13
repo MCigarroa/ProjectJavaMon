@@ -491,7 +491,8 @@ public class GameController implements Initializable {
         contextMenu.getItems().add(attackEmber);
         attackEmber.setOnAction(event -> {
             new Attack("Ember",new HashMap<>(Map.of("fire",1,"colorless",1)),100,"nada").TakeAction(
-                    game.getPlayerList().get(1).getActive().get(0),
+                    game.getPlayerList().get(0).getActive().get(0),
+                    game.getPlayerList().get(0).getActive().get(1),
                     game.getPlayerList().get(0),
                     game.getPlayerList().get(1)
             );

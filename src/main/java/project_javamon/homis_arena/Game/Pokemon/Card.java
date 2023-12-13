@@ -2,6 +2,8 @@ package project_javamon.homis_arena.Game.Pokemon;
 
 import project_javamon.homis_arena.Util.CardPosition;
 
+import java.util.HashMap;
+
 public abstract class Card {
     private String name;
     private String image;
@@ -48,5 +50,6 @@ public abstract class Card {
     public String toString() {
         return "Name: " + name + " CardID: " + cardID + " CardPosition: " + cardPosition;
     }
+
 
 }
