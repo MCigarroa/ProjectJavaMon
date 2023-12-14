@@ -19,11 +19,13 @@ public class PokemonCardParser {
     public static ObservableList<Card> getAllAttributes(File file) {
         try {
             String json = getAllJsonString(file);
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Card.class, new CardDeserializer())
-                    .create();
+
+            // GSON MAGIC ==============================================
+            Gson gson = new GsonBuilder().registerTypeAdapter(Card.class, new CardDeserializer()).create();
             Type listType = new TypeToken<ArrayList<Card>>(){}.getType();
             ArrayList<Card> arrayList = gson.fromJson(json, listType);
+            // GSON MAGIC END ==========================================
+
             return FXCollections.observableArrayList(arrayList);
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + e.getMessage());

@@ -2,9 +2,7 @@ package project_javamon.homis_arena.Game;
 
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
-import project_javamon.homis_arena.Controller.GameController;
 import project_javamon.homis_arena.Game.Pokemon.Card;
-import project_javamon.homis_arena.Main;
 import project_javamon.homis_arena.Util.CardPosition;
 
 import java.util.ArrayList;
@@ -18,8 +16,6 @@ public class Player {
     private ObservableList<Card> active = FXCollections.observableArrayList();
     private ObservableList<Card> discard = FXCollections.observableArrayList();
     private ObservableList<Card> prize = FXCollections.observableArrayList();
-
-    GameController gameController = Main.getMainGameController();
 
     public Player() {
         this.name = "Player " + playerNumber;
@@ -121,7 +117,7 @@ public class Player {
     }
 
     // Utilities
-    public void RemoveFromPrevious(Card card, CardPosition newCardPosition) {
+    public void removeFromPrevious(Card card, CardPosition newCardPosition) {
         CardPosition previousPosition = card.getCardPosition();
         card.setFormerCardPosition(previousPosition);
         card.setCardPositions(newCardPosition);
@@ -144,10 +140,5 @@ public class Player {
         if (previousList != null && !previousList.remove(card)) {
             System.out.println("Error: Failed to remove card from " + previousPosition + " for card " + card.getCardID());
         }
-    }
-
-    public void setGameController(GameController gameController) {
-        System.out.println("Setting GameController in Player: " + gameController);
-        this.gameController = gameController;
     }
 }

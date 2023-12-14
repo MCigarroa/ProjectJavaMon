@@ -17,16 +17,16 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import project_javamon.homis_arena.Game.Actions.Attack;
 import project_javamon.homis_arena.Game.Game;
-import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.Card;
 import project_javamon.homis_arena.Game.Pokemon.EnergyCard;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
-import project_javamon.homis_arena.Main;
 import project_javamon.homis_arena.Util.CardPosition;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
@@ -61,8 +61,6 @@ public class GameController implements Initializable {
     ArrayList<Node> northMat;
     ArrayList<Node> southMat;
 
-    private ArrayList<Player> playerList;
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("Controller initialized");
@@ -92,11 +90,13 @@ public class GameController implements Initializable {
         });
     }
 
-    private void updateBenchUI(ObservableList<Card> discard) {
-
+    private void updateBenchUI(ObservableList<Card> bench) {
+        southBench.getChildren().clear();
+        populateContainerFromList(southBench, bench);
     }
 
     private void updateDiscardUI(ObservableList<Card> discard) {
+        updateActiveUI(Game.getActivePlayer().getActive());
         southDiscard.getChildren().clear();
         populateContainerFromList(southDiscard, discard);
         // We don't really have a special UI effect for this
@@ -111,8 +111,11 @@ public class GameController implements Initializable {
 
     private void updateActiveUI(ObservableList<Card> hand) {
         southActive.getChildren().clear();
+        northActive.getChildren().clear();
         populateContainerFromList(southActive, hand);
+        populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
         updateActiveSpacing(southActive);
+        updateActiveSpacing(northActive);
     }
 
     private void updateHandUI(ObservableList<Card> hand) {
@@ -120,6 +123,7 @@ public class GameController implements Initializable {
         southHand.getChildren().clear();
         populateContainerFromList(southHand, hand);
         updateCardHandSpacing(southHand);
+        //populateContainerFromList(southActive, Game.getActivePlayer().getActive());
         //updateUI();
     }
 
@@ -149,16 +153,17 @@ public class GameController implements Initializable {
     // TODO move card to hand, send to discard, , restrictionNotification, players not able to interact with other-side card,
     // TODO UI damage tracker / status,
 
-    // Button Actions ===============================
+    // Button Actions ================================================================
     @FXML
     public void onSouthDeckClicked() {
         Player currentPlayer = Game.getActivePlayer();
         currentPlayer.drawCard();
-        currentPlayer.printPlayerCards();
+        currentPlayer.printPlayerCards(); // debug
     }
     @FXML
     public void showHand() {
-        if (southHand.getLayoutY() == gameMat.getPrefHeight() - 150){
+        // Just up and down on button click
+        if (southHand.getLayoutY() == gameMat.getPrefHeight() - 100){
             southHand.setLayoutY(gameMat.getPrefHeight()- 300);
         } else {
             southHand.setLayoutY(gameMat.getPrefHeight()- 100);
@@ -192,8 +197,8 @@ public class GameController implements Initializable {
         updateUI();
     }
 
-    // Button Actions END ===========================
-    // Listeners ====================================
+    // Button Actions END ============================================================
+    // Listeners =====================================================================
     private void setupDropZone(Pane pane) {
         pane.setOnDragOver(event -> {
             if (event.getGestureSource() != pane && event.getDragboard().hasString()) {
@@ -207,9 +212,9 @@ public class GameController implements Initializable {
 
             // This should prevent card from moving to the north mat,
             // but it is just causing them to disappear
-            if (pane.getLayoutY() < gameMat.getLayoutY() / 2) {
-                return;
-            }
+//            if (pane.getLayoutY() < gameMat.getLayoutY() / 2) {
+//                return;
+//            }
             if (db.hasString()) {
                 // Gets ID
                 String cardId = db.getString();
@@ -234,12 +239,14 @@ public class GameController implements Initializable {
         // Fixed to call only 2 times :)
         if (newLocation.equals(southActive) && card instanceof EnergyCard) {
             currentPlayer.getDiscard().add(card); //updateCall
-            currentPlayer.getActive().remove(card); //updateCall
+            currentPlayer.getHand().remove(card); //updateCall
+            // If cards are energy will send to discard and add energy to card
             PokemonCard pokemonCard = (PokemonCard) currentPlayer.getActive().get(0);
             pokemonCard.addEnergy((EnergyCard) card);
-            pokemonCard.setCardPositions(CardPosition.DISCARD);
+            System.out.println(pokemonCard.getEnergyBanked());
+            card.setCardPositions(CardPosition.DISCARD);
         } else {
-            currentPlayer.RemoveFromPrevious(card, determineCardPosition(newLocation)); //updateCall
+            currentPlayer.removeFromPrevious(card, determineCardPosition(newLocation)); //updateCall
             updatePlayerListWithNewCardLocation(currentPlayer, card, newLocation); //updateCall
         }
         // Expensive operation END============================================================
@@ -296,25 +303,35 @@ public class GameController implements Initializable {
         populateContainerFromList(northDiscard, player2.getDiscard());
 
         updateActiveSpacing(southActive);
-        //updateActiveSpacing(northActive);
-        updateHandUI();
+        updateCardHandSpacing(southHand);
+        updateCardHandSpacing(northHand);
+        updateActiveSpacing(northActive);
+        //updateHandUI(player1.getHand());
     }
 
     private void populateContainerFromList(Pane container, ObservableList<Card> cardList) {
         // Expensive operation but simplifies updates
         for (Card card : cardList) {
-            ImageView cardView;
+            ImageView imageView;
             // Cards that should face down get backCard assignment
-            if (container.equals(southPrize) || container.equals(southDiscard) || container.equals(northPrize) ||
-                    container.equals(northHand) || container.equals(northDiscard)){
-                cardView = new ImageView(backCard);
-                setCardHeightAndWidth(cardView);
-                addDragAndDropCapability(cardView, card);
-                
+            if (container.equals(southPrize) || container.equals(southDiscard) ||
+                container.equals(northPrize) || container.equals(northHand)    || container.equals(northDiscard)) {
+                imageView = new ImageView(backCard);
+                setCardHeightAndWidth(imageView);
+                addDragAndDropCapability(imageView, card);
             } else {
-                cardView = createCardImageView(card);
+                imageView = createCardImageView(card);
+                addDragAndDropCapability(imageView, card);
+                setCardHeightAndWidth(imageView);
+                setUpContextMenuWithPopUp(imageView);
             }
-            container.getChildren().add(cardView);
+            if (card instanceof PokemonCard && container.equals(southActive)) {
+                Pane cardView = createEnergyIcons(imageView, (PokemonCard) card);
+                container.getChildren().add(cardView);
+
+            } else {
+                container.getChildren().add(imageView);
+            }
         }
     }
 
@@ -349,11 +366,12 @@ public class GameController implements Initializable {
             event.consume();
         });
     }
-    // Listeners End ================================
+    // Listeners End =================================================================
+    // Init Zone =====================================================================
     private void initSouthCardHand() {
         southHand = new HBox();
         southHand.setLayoutX(gameMat.getPrefWidth() /  2);
-        southHand.setLayoutY(gameMat.getPrefHeight() - 150);
+        southHand.setLayoutY(gameMat.getPrefHeight() - 100);
         gameMat.getChildren().add(southHand);
     }
     private void initNorthCardHand() {
@@ -394,6 +412,7 @@ public class GameController implements Initializable {
         initBox(active);
         setupDropZone(active);
     }
+
     private void initDiscard(VBox discard) {
         initBox(discard);
         discard.setSpacing(-200);
@@ -404,14 +423,14 @@ public class GameController implements Initializable {
         active.getChildren().clear();
         if (active.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(active);
     }
+
     private void initBench(HBox bench){
         bench.getChildren().clear();
         if (bench.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(bench);
         bench.setSpacing(5);
         setupDropZone(bench);
     }
-
-
+// Init Zone END==================================================================
 
     private void updateActiveSpacing(HBox hbox) {
         double overlap = 100;
@@ -440,8 +459,8 @@ public class GameController implements Initializable {
         cardHand.setSpacing(cardSpacing);
 
         cardHand.setLayoutX((gameMat.getPrefWidth() - totalCardWidth) / 2);
-        // Check if it is northhand to make sure Y is not dragged down to southhand position
-        cardHand.setLayoutY(cardHand.equals(northHand)? 0 :gameMat.getPrefHeight() - 150);
+        // Check if it is northHand to make sure Y is not dragged down to southHand position
+        cardHand.setLayoutY(cardHand.equals(northHand)? -100 :gameMat.getPrefHeight() - 150);
     }
 
     private void setCardHeightAndWidth(ImageView cardView){
@@ -471,6 +490,8 @@ public class GameController implements Initializable {
                     Game.getActivePlayer(),
                     Game.getWaitingPlayer()
             );
+            populateContainerFromList(southActive, Game.getActivePlayer().getActive());
+            populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
         });
 
         MenuItem viewLargeItem = new MenuItem("View Large");
@@ -498,7 +519,7 @@ public class GameController implements Initializable {
         Popup popup = new Popup();
         ImageView enlargedCardView;
 
-        // If prize or discard, we need to get the card image instead of the face down image
+        // If prize or discard, we need to get the card image instead of the face-down image
         if (cardView.getParent().equals(southPrize) || cardView.getParent().equals(southPrize)) {
             enlargedCardView = createCardImageView(findCardById((String) cardView.getProperties().get("cardId")));
         } else {
@@ -506,8 +527,8 @@ public class GameController implements Initializable {
         }
 
         // Size of Popup
-        enlargedCardView.setFitWidth(cardView.getFitWidth() * 2);
-        enlargedCardView.setFitHeight(cardView.getFitHeight() * 2);
+        enlargedCardView.setFitWidth(cardView.getFitWidth() * 2.5);
+        enlargedCardView.setFitHeight(cardView.getFitHeight() * 2.5);
         enlargedCardView.setPreserveRatio(true);
 
         popup.getContent().add(enlargedCardView);
@@ -553,6 +574,7 @@ public class GameController implements Initializable {
     }
 
     private void printMatContents(String message, ArrayList<Node> mat) {
+        // Used for debug
         System.out.println(message);
         for (Node node : mat) {
             if (node instanceof Pane pane) {
@@ -563,17 +585,8 @@ public class GameController implements Initializable {
         }
     }
 
-    public void updateHandUI() {
-        southHand.getChildren().clear();
-        for (Card card : Game.getActivePlayer().getHand()) {
-            ImageView cardView = createCardImageView(card);
-            southHand.getChildren().add(cardView);
-            updateCardHandSpacing(southHand);
-        }
-    }
     private ImageView createCardImageView(Card card) {
-        String imagePath = "/images/" + card.getImage();
-        InputStream is = getClass().getResourceAsStream(imagePath);
+        InputStream is = getClass().getResourceAsStream("/images/" + card.getImage());
 
         Image cardImage;
         if (is != null) {
@@ -592,6 +605,7 @@ public class GameController implements Initializable {
     // Coin Flip END====================================================================================
     @FXML
     private void coinFlip() {
+        updateUI();
         // This creates a pane that allows for coin flips
         StackPane coinPane = new StackPane();
         coinPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0);-fx-alignment: center;");
@@ -636,6 +650,71 @@ public class GameController implements Initializable {
         rt.play();
     }
 
-    // Coin Flip =======================================================================================
+    // Coin Flip END ====================================================================================
+    // Energy Icon ======================================================================================
 
+    public Pane createEnergyIcons(ImageView imageView, PokemonCard card) {
+        // This breaks
+        double padding = 10;
+        setCardHeightAndWidth(imageView);
+
+        Pane cardView = new Pane();
+        cardView.getChildren().add(imageView);
+
+        // Add HP
+        Text healthText = new Text(String.valueOf(card.getHp()));
+        healthText.setStyle("-fx-font-size: 20;");
+        healthText.setFill(Color.BLACK);
+        // Positions the HP top left corner
+        healthText.relocate(padding, padding);
+        cardView.getChildren().add(healthText);
+
+
+        double radius = 10;
+        double initialY = padding;
+        // Creates energyIcons
+        for (Map.Entry<String, Integer> entry : card.getEnergyBanked().entrySet()) {
+            String type = entry.getKey();
+            Integer amount = entry.getValue();
+
+            if (amount > 0) {
+                StackPane energyIndicator = new StackPane();
+                // Circle
+                Circle energyCircle = new Circle(radius, getColorForType(type));
+                energyCircle.setStroke(Color.BLACK);
+                energyCircle.setStrokeWidth(2);
+                // Text
+                Text energyAmountText = new Text(String.valueOf(amount));
+                energyAmountText.setFill(Color.BLACK);
+                energyAmountText.setStyle("-fx-font-weight: bold; -fx-font-size: " + (radius * 1.5) + ";");
+                    
+                energyIndicator.getChildren().addAll(energyCircle, energyAmountText);
+
+                // location
+                double xPosition = imageView.getFitWidth() - (radius / 2) - (padding / 2);
+                energyIndicator.relocate(xPosition, initialY);
+
+                cardView.getChildren().add(energyIndicator);
+                // creates space between energyicons
+                initialY += 1 * radius + padding;
+            }
+        }
+        return cardView;
+    }
+
+    private Color getColorForType(String type) {
+        return switch (type) {
+            case "fire" -> Color.RED;
+            case "water" -> Color.BLUE;
+            case "grass" -> Color.GREEN;
+            case "colorless" -> Color.GRAY;
+            case "psychic" -> Color.PURPLE;
+            case "fighting" -> Color.ORANGE;
+            case "darkness" -> Color.BLACK;
+            case "metal" -> Color.SILVER;
+            case "fairy" -> Color.PINK;
+            default -> Color.YELLOW;
+        };
+    }
+    // Energy Icon END===================================================================================
 }

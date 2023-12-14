@@ -65,9 +65,6 @@ public class Main extends Application {
                 throw new IllegalStateException("GameController is null after FXML load.");
             }
 
-            Game.getActivePlayer().setGameController(gameController);
-            Game.getWaitingPlayer().setGameController(gameController);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -117,15 +114,10 @@ public class Main extends Application {
         return new Scene(root, X_RES,Y_RES);
     }
     // Scene creation END =========================================
-
     public static Game getGame() {
         return game;
     }
     public static GameState getGameState() {
         return gameState;
     }
-    public static GameController getMainGameController() {
-        return gameController;
-    }
-
 }

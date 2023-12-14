@@ -29,22 +29,13 @@ public class PokemonCard extends Card {
     public HashMap<String, Integer> getEnergyBanked() {
         return energyBanked;
     }
+
     public void addEnergy(EnergyCard energyCard) {
-        energyBanked.put(energyCard.getType(), energyBanked.get(energyCard.getType() + 1));
+        String type = energyCard.getType();
+        int currentEnergy = energyBanked.getOrDefault(type, 0);
+        energyBanked.put(type, currentEnergy + 1);
     }
-    public void energyConsumed(HashMap<String, Integer> energyCost) {
-        for (HashMap.Entry<String, Integer> costEntry : energyCost.entrySet()) {
-            String energyType = costEntry.getKey();
-            int costAmount = costEntry.getValue();
-
-            int currentBanked = energyBanked.get(energyType);
-            int newBankedAmount = currentBanked - costAmount;
-
-            energyBanked.put(energyType, newBankedAmount);
-        }
-    }
-
-
+    
     public String getType() {
         return type;
     }

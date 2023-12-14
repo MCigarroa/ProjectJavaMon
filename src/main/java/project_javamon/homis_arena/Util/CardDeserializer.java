@@ -14,6 +14,7 @@ import java.lang.reflect.Type;
 class CardDeserializer implements JsonDeserializer<Card> {
     @Override
     public Card deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        // Helps GSON understand what class it is making dependent on content
         JsonObject jsonObject = json.getAsJsonObject();
 
         if (jsonObject.has("hp") && jsonObject.has("weakness") && jsonObject.has("resistance")) {

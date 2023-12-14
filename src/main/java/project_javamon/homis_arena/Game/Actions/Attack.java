@@ -6,6 +6,7 @@ import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Util.CardPosition;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class Attack implements IAction{
@@ -42,14 +43,31 @@ public class Attack implements IAction{
                 System.out.println("POW KILLED IT");
             }
             System.out.println("POW HIT IT FOR " + dmg);
-            cardAttacking.energyConsumed(energyCost);
         } else {
             System.out.println("Can't Afford Attack");
         }
     }
 
     private boolean canAfford(PokemonCard cardAttacking) {
-        return energyCost.equals(cardAttacking.getEnergyBanked());
+        // First iterates to check if card can afford attack for example: 1 red balance != 2 red cost
+        // Second checks if something can pay for its colorless: 2 red balance == 1 red & 1 colorless cost
+        HashMap<String, Integer> availableEnergy = cardAttacking.getEnergyBanked();
+        int colorlessNeeded = energyCost.getOrDefault("colorless", 0);
+        int totalAvailableForColorless = availableEnergy.values().stream().mapToInt(Integer::intValue).sum();
+
+        for (Map.Entry<String, Integer> costEntry : energyCost.entrySet()) {
+            String energyType = costEntry.getKey();
+            int costAmount = costEntry.getValue();
+
+            if (!energyType.equals("colorless")) {
+                if (availableEnergy.getOrDefault(energyType, 0) < costAmount) {
+                    return false;
+                } else {
+                    totalAvailableForColorless -= costAmount;
+                }
+            }
+        }
+        return totalAvailableForColorless >= colorlessNeeded;
     }
 
 
