@@ -1,7 +1,9 @@
 package project_javamon.homis_arena.Game.Pokemon;
 
+import kotlin.jvm.JvmStatic;
 import project_javamon.homis_arena.Game.Actions.Attack;
 import project_javamon.homis_arena.Game.Actions.IAction;
+import project_javamon.homis_arena.Util.StatusEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,13 +16,17 @@ public class PokemonCard extends Card {
     private int retreatCost;
     private String previousStage;
     private String nextStage;
-    private transient ArrayList<IAction> iAction;
+
+    private transient int maxHp;
+    private transient ArrayList<StatusEffect> statusEffects;
+    private transient ArrayList<IAction> iAction = new ArrayList<>();
     private transient HashMap<String, Integer> energyBanked;
     private final transient String[] types = {"fire", "water", "grass", "colorless",
             "psychic", "fighting", "darkness", "metal", "fairy"};
 
     public PokemonCard() {
         super();
+        this.maxHp = hp;
         this.energyBanked = new HashMap<>();
         for (String type : types) {
             energyBanked.put(type, 0);
@@ -98,5 +104,21 @@ public class PokemonCard extends Card {
 
     public void setiAction(ArrayList<IAction> iAction) {
         this.iAction = iAction;
+    }
+
+    public void addiAction(IAction iAction) {
+        this.iAction.add(iAction);
+    }
+
+    public ArrayList<StatusEffect> getStatusEffects() {
+        return statusEffects;
+    }
+
+    public void setStatusEffects(ArrayList<StatusEffect> statusEffects) {
+        this.statusEffects = statusEffects;
+    }
+
+    public void addStatusEffects(StatusEffect statusEffect) {
+        statusEffects.add(statusEffect);
     }
 }

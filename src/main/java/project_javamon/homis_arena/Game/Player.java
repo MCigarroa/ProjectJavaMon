@@ -54,6 +54,8 @@ public class Player {
     }
 
     public Card findCardById(String cardId) {
+        // very expense need refactor TODO Refector Card FindCardById
+        // Mayber create a hashMap for better finding
         ArrayList<ObservableList<Card>> allCardLists = new ArrayList<>();
         allCardLists.add(hand);
         allCardLists.add(bench);
@@ -68,6 +70,9 @@ public class Player {
                 }
             }
         }
+
+        System.out.println("Couldn't find the Card with ID " + cardId + ", printing all cards: ");
+        printPlayerCards();
         throw new RuntimeException("Couldn't find the Card: " + cardId);
     }
 
@@ -133,7 +138,7 @@ public class Player {
             case DECK -> deck;
             case UNKNOWN -> {
                 System.out.println("Error: Unknown previous position for card " + card.getCardID());
-                yield null;
+                throw new RuntimeException("Error: At Removing Previous location");
             }
         };
 

@@ -1,0 +1,140 @@
+[
+  {
+    "attackName": "hydro pump",
+    "energyCost":{ "water":3 },
+    "dmg": 40,
+    "extraAction": "if 4 water, +10 dmg; if 5 water, +20 dmg"
+  },
+  {
+    "attackName": "fire spin",
+    "energyCost":{ "fire":4 },
+    "dmg": 100,
+    "extraAction": "discard 2 any type of energy"
+  },
+  {
+    "attackName": "dragon rage",
+    "energyCost":{ "water":3 },
+    "dmg": 50,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "bubble beam",
+    "energyCost":{ "water":4 },
+    "dmg": 40,
+    "extraAction": "flip a coin; if heads, defending pokemon is paralyzed"
+  },
+  {
+    "attackName": "lure",
+    "energyCost":{ "colorless":2 },
+    "dmg": 0,
+    "extraAction": "if opponent has benched pokemon, choose one and switch with their active"
+  },
+  { 
+    "attackName": "fire blast",
+    "energyCost":{ "fire":4 },
+    "dmg": 80,
+    "extraAction": "discard 1 fire energy"
+  },
+  {
+    "attackName": "agility",
+    "energyCost":{ "lightning":1, "colorless":2 },
+    "dmg": 20,
+    "extraAction": "flip a coin; if heads, prevent all dmg and effects to self"
+  },
+  {
+    "attackName": "thunder",
+    "energyCost":{ "lightning":3, "colorless":1 },
+    "dmg": 60,
+    "extraAction": "flip a coin; if tails, deal 30 dmg to self"
+  },
+  {
+    "attackName": "slash",
+    "energyCost":{ "colorless":3 },
+    "dmg": 30,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "flamethrower",
+    "energyCost":{ "fire":2,"colorless":1 },
+    "dmg": 50,
+    "extraAction": "discard 1 fire energy"
+  },
+  {
+    "attackName": "aurora beam",
+    "energyCost":{ "water":2, "colorless":1 },
+    "dmg": 50,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "ice beam",
+    "energyCost":{ "water":2, "colorless":2 },
+    "dmg": 30,
+    "extraAction": "flip a coin; if heads, defending pokemon is paralyzed"
+  },
+  {
+    "attackName": "tackle",
+    "energyCost":{ "colorless":1 },
+    "dmg": 10,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "flail",
+    "energyCost":{ "water":1 },
+    "dmg": 0,
+    "extraAction": "deal 10 dmg x number of dmg counters on self"
+  },
+  {
+    "attackName": "headbutt",
+    "energyCost":{ "water":1 },
+    "dmg": 10,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "withdraw",
+    "energyCost":{ "water":1, "colorless":1 },
+    "dmg": 0,
+    "extraAction": "flip a coin; if heads, prevent all dmg to self (DO NOT prevent effects)"
+  },
+  {
+    "attackName": "bite",
+    "energyCost":{ "water":1, "colorless":2 },
+    "dmg": 40,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "scratch",
+    "energyCost":{ "colorless":1 },
+    "dmg": 10,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "ember",
+    "energyCost":{ "fire":1, "colorless":1 },
+    "dmg": 30,
+    "extraAction": "discard 1 fire energy"
+  },
+  {
+    "attackName": "gnaw",
+    "energyCost":{ "colorless":1 },
+    "dmg": 10,
+    "extraAction": "none"
+  },
+  {
+    "attackName": "thunder jolt",
+    "energyCost":{ "lightning":1, "colorless":1 },
+    "dmg": 30,
+    "extraAction": "flip a coin; if tails, deal 10 dmg to self"
+  },
+  {
+    "attackName": "bubble",
+    "energyCost":{ "water":1 },
+    "dmg": 10,
+    "extraAction": "flip a coin; if heads, defending pokemon is paralyzed"
+  },
+  {
+    "attackName": "confuse ray",
+    "energyCost":{ "fire":2 },
+    "dmg": 10,
+    "extraAction": "flip a coin; if heads, defending pokemon is confused"
+  }
+]

@@ -60,8 +60,9 @@ public class Main extends Application {
         Scene scene;
         try {
             scene = new Scene(fxmlLoader.load(), X_RES, Y_RES);
-            GameController gameController = fxmlLoader.getController();
-            if (gameController == null) {
+            GameController _gameController = fxmlLoader.getController();
+            Main.setGameController(_gameController);
+            if (_gameController == null) {
                 throw new IllegalStateException("GameController is null after FXML load.");
             }
 
@@ -119,5 +120,11 @@ public class Main extends Application {
     }
     public static GameState getGameState() {
         return gameState;
+    }
+    public static GameController getGameController() {
+        return gameController;
+    }
+    public static void setGameController(GameController gameController) {
+        Main.gameController = gameController;
     }
 }

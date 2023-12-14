@@ -4,12 +4,12 @@ import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Main;
 
 public abstract class AbstractState {
-    private GameState gameState;
+    private GameState gameState = Main.getGameState();
     public AbstractState() {
-        this.gameState = Main.getGameState();
     }
     public abstract void onStateChange();
     public abstract boolean isStateComplete();
+    public abstract boolean isMoveLegal();
     public abstract AbstractState lastState();
     public abstract AbstractState nextState();
 

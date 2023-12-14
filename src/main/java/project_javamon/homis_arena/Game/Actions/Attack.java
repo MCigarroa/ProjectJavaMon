@@ -1,23 +1,23 @@
 package project_javamon.homis_arena.Game.Actions;
 
 import project_javamon.homis_arena.Game.Player;
-import project_javamon.homis_arena.Game.Pokemon.Card;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Util.CardPosition;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
-public class Attack implements IAction{
+public class Attack implements IAction {
     String attackName;
     HashMap<String, Integer> energyCost;
-    int dmg;
+    int damage;
     String extraActions;
 
-    public Attack(String attackName, HashMap<String,Integer> energyCost, int dmg, String extraActions) {
+    public Attack(String attackName, HashMap<String, Integer> energyCost, int dmg, String extraActions) {
         this.attackName = attackName;
-        this.dmg = dmg;
+        this.damage = dmg;
         this.extraActions = extraActions;
 
         // We need to be sure that this is Map is properly instantiated to how Player is
@@ -33,8 +33,8 @@ public class Attack implements IAction{
     @Override
     public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
         System.out.println("Attack Attempt");
-        if (canAfford(cardAttacking)){
-            cardDefending.setHp(cardDefending.getHp() - dmg);
+        if (canAfford(cardAttacking) && attackLegal(cardAttacking, cardDefending)) {
+            calculateDamage(cardAttacking, cardDefending);
             if (cardDefending.getHp() <= 0) {
                 playerDefending.getDiscard().add(cardDefending); // updates UI
                 playerDefending.getActive().remove(cardDefending); // updates UI
@@ -42,11 +42,41 @@ public class Attack implements IAction{
                 cardDefending.setCardPositions(CardPosition.DISCARD);
                 System.out.println("POW KILLED IT");
             }
-            System.out.println("POW HIT IT FOR " + dmg);
-        } else {
-            System.out.println("Can't Afford Attack");
+            System.out.println("POW HIT IT FOR " + damage);
         }
     }
+
+    private boolean attackLegal(PokemonCard cardAttacking, PokemonCard cardDefending) {
+        // TODO determine if legal move
+        return true;
+    }
+
+    private void calculateDamage(PokemonCard cardAttacking, PokemonCard cardDefending) {
+        int baseDamage = damage;
+        int resistedDamage = 0;
+        int multiplication = 1;
+
+        // Currently only Hydro Pump actually increases dmg based on an element
+        if (Objects.equals(cardAttacking.getName(), "hydro pump")) {
+            int waterEnergy = cardAttacking.getEnergyBanked().getOrDefault("water", 0);
+            if (waterEnergy == 4) {
+                resistedDamage += 10;
+            } else if (waterEnergy == 5) {
+                resistedDamage += 20;
+            }
+        }
+
+        // Check for resistance and weakness
+        if (Objects.equals(cardAttacking.getType(), cardDefending.getResistance())) {
+            resistedDamage -= 30;
+        } else if (Objects.equals(cardAttacking.getType(), cardDefending.getWeakness())) {
+            multiplication *= 2;
+        }
+
+        int totalDamage = (baseDamage * multiplication) - resistedDamage;
+        cardDefending.setHp(cardDefending.getHp() - totalDamage);
+    }
+
 
     private boolean canAfford(PokemonCard cardAttacking) {
         // First iterates to check if card can afford attack for example: 1 red balance != 2 red cost
@@ -61,6 +91,7 @@ public class Attack implements IAction{
 
             if (!energyType.equals("colorless")) {
                 if (availableEnergy.getOrDefault(energyType, 0) < costAmount) {
+                    System.out.println("Not enough Energy: " + energyType);
                     return false;
                 } else {
                     totalAvailableForColorless -= costAmount;
@@ -72,7 +103,7 @@ public class Attack implements IAction{
 
 
     // Getters and Setters ==========================================================
-    public String getAttackName() {
+    public String getActionName() {
         return attackName;
     }
 
@@ -88,12 +119,12 @@ public class Attack implements IAction{
         this.energyCost = energyCost;
     }
 
-    public int getDmg() {
-        return dmg;
+    public int getDamage() {
+        return damage;
     }
 
-    public void setDmg(int dmg) {
-        this.dmg = dmg;
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     public String getExtraActions() {

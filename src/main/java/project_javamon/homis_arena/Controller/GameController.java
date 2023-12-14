@@ -23,10 +23,12 @@ import javafx.stage.Popup;
 import javafx.util.Duration;
 import project_javamon.homis_arena.Game.Actions.Attack;
 import project_javamon.homis_arena.Game.Game;
+import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.Card;
 import project_javamon.homis_arena.Game.Pokemon.EnergyCard;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
+import project_javamon.homis_arena.Util.AbilityBinder;
 import project_javamon.homis_arena.Util.CardPosition;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
@@ -34,6 +36,7 @@ import javafx.collections.ListChangeListener;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 
 public class GameController implements Initializable {
@@ -150,7 +153,7 @@ public class GameController implements Initializable {
     }
 
 
-    // TODO move card to hand, send to discard, , restrictionNotification, players not able to interact with other-side card,
+    // TODO move card to hand, send to discard, , restrictionNotification,
     // TODO UI damage tracker / status,
 
     // Button Actions ================================================================
@@ -200,6 +203,10 @@ public class GameController implements Initializable {
     // Button Actions END ============================================================
     // Listeners =====================================================================
     private void setupDropZone(Pane pane) {
+        if (pane.equals(northHand) || pane.equals(northDiscard) || pane.equals(northPrize) || pane.equals(northBench) ||
+            pane.equals(northActive) || pane.equals(northDeck)) {
+            return;
+        }
         pane.setOnDragOver(event -> {
             if (event.getGestureSource() != pane && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
@@ -237,6 +244,10 @@ public class GameController implements Initializable {
         // Expensive operation ===============================================================
         // I don't want to mess with it atm, it calls 5 UI updates
         // Fixed to call only 2 times :)
+        if (!GameState.isMoveLegal()){
+
+            return;
+        }
         if (newLocation.equals(southActive) && card instanceof EnergyCard) {
             currentPlayer.getDiscard().add(card); //updateCall
             currentPlayer.getHand().remove(card); //updateCall
@@ -323,7 +334,6 @@ public class GameController implements Initializable {
                 imageView = createCardImageView(card);
                 addDragAndDropCapability(imageView, card);
                 setCardHeightAndWidth(imageView);
-                setUpContextMenuWithPopUp(imageView);
             }
             if (card instanceof PokemonCard && container.equals(southActive)) {
                 Pane cardView = createEnergyIcons(imageView, (PokemonCard) card);
@@ -332,6 +342,7 @@ public class GameController implements Initializable {
             } else {
                 container.getChildren().add(imageView);
             }
+            setUpContextMenuWithPopUp(imageView);
         }
     }
 
@@ -360,9 +371,9 @@ public class GameController implements Initializable {
         });
 
         cardView.setOnDragDone(event -> {
-
             cardView.setOpacity(1);
-            setUpContextMenuWithPopUp(cardView);
+
+            //setUpContextMenuWithPopUp(cardView);
             event.consume();
         });
     }
@@ -480,20 +491,19 @@ public class GameController implements Initializable {
     private void setUpContextMenuWithPopUp(ImageView cardView) {
         ContextMenu contextMenu = new ContextMenu();
 
-        //menuActionsGenerator(contextMenu, cardView);
-        MenuItem attackEmber = new MenuItem("ember");
-        contextMenu.getItems().add(attackEmber);
-        attackEmber.setOnAction(event -> {
-            new Attack("Ember",new HashMap<>(Map.of("fire",1,"colorless",1)),100,"nada").TakeAction(
-                    (PokemonCard) Game.getActivePlayer().getActive().get(0),
-                    (PokemonCard) Game.getWaitingPlayer().getActive().get(0),
-                    Game.getActivePlayer(),
-                    Game.getWaitingPlayer()
-            );
-            populateContainerFromList(southActive, Game.getActivePlayer().getActive());
-            populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
-        });
-
+        menuActionsGenerator(contextMenu, cardView);
+//        MenuItem attackEmber = new MenuItem("ember");
+//        contextMenu.getItems().add(attackEmber);
+//        attackEmber.setOnAction(event -> {
+//            new Attack("Ember",new HashMap<>(Map.of("fire",1,"colorless",1)),100,"nada").TakeAction(
+//                    (PokemonCard) Game.getActivePlayer().getActive().get(0),
+//                    (PokemonCard) Game.getWaitingPlayer().getActive().get(0),
+//                    Game.getActivePlayer(),
+//                    Game.getWaitingPlayer()
+//            );
+//            populateContainerFromList(southActive, Game.getActivePlayer().getActive());
+//            populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
+//        });
         MenuItem viewLargeItem = new MenuItem("View Large");
         contextMenu.getItems().add(viewLargeItem);
 
@@ -504,15 +514,30 @@ public class GameController implements Initializable {
     }
 
     private void menuActionsGenerator(ContextMenu contextMenu, ImageView cardView) {
-         Card card = Game.getActivePlayer().findCardById((String) cardView.getProperties().get("cardId"));
+
+         Card card = findCardById((String) cardView.getProperties().get("cardId"));
 
          if ( card.getCardPosition() != CardPosition.ACTIVE && !(card instanceof PokemonCard)) {
              return;
          }
+         PokemonCard pokemonCard = (PokemonCard) card;
+        AbilityBinder.attackGenerator(pokemonCard);
+         for (int index = 0; index < pokemonCard.getiAction().size(); index++) {
+             MenuItem iAction = new MenuItem(pokemonCard.getiAction().get(index).getActionName());
+             contextMenu.getItems().add(iAction);
+             int finalIndex = index;
+             iAction.setOnAction(event -> {
+                 pokemonCard.getiAction().get(finalIndex).TakeAction(
+                         (PokemonCard) Game.getActivePlayer().getActive().getFirst(),
+                         (PokemonCard) Game.getWaitingPlayer().getActive().getFirst(),
+                         Game.getActivePlayer(),
+                         Game.getWaitingPlayer()
 
-
-
-
+                 );
+                 populateContainerFromList(southActive, Game.getActivePlayer().getActive());
+                 populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
+             });
+         }
     }
 
     private void setCardPopupEffects(ImageView cardView) {
@@ -597,7 +622,7 @@ public class GameController implements Initializable {
         ImageView imageView = new ImageView(cardImage);
         addDragAndDropCapability(imageView, card);
         setCardHeightAndWidth(imageView);
-        setUpContextMenuWithPopUp(imageView);
+        //setUpContextMenuWithPopUp(imageView);
         return imageView;
     }
 
@@ -618,7 +643,7 @@ public class GameController implements Initializable {
         Button flipButton = new Button("Flip Coin");
         flipButton.setTranslateY(80);
         flipButton.setOnAction(e -> {
-            flipCoin(coinView, homi, backCard);
+             flipCoin(coinView, homi, backCard);
         });
 
         Button exitFlipButton = new Button("Exit");
@@ -645,7 +670,21 @@ public class GameController implements Initializable {
         rt.setOnFinished(e -> {
             // Randomly choose heads or tails at the end of the animation
             // Need way to send bool for game logic
-            coinView.setImage(random.nextBoolean() ? homi : backCard);
+            boolean result = random.nextBoolean();
+            coinView.setImage(result ? homi : backCard);
+        });
+        rt.play();
+    }
+    public static void flipCoin(ImageView coinView, Image homi, Image backCard, Consumer<Boolean> callback) {
+        Random random = new Random();
+        RotateTransition rt = new RotateTransition(Duration.seconds(1), coinView);
+        rt.setByAngle(360 * 3); // Rotate three times
+        rt.setOnFinished(e -> {
+            // Randomly choose heads or tails at the end of the animation
+            // Need way to send bool for game logic
+            boolean result = random.nextBoolean();
+            coinView.setImage(result ? homi : backCard);
+            callback.accept(result);
         });
         rt.play();
     }
@@ -656,7 +695,7 @@ public class GameController implements Initializable {
     public Pane createEnergyIcons(ImageView imageView, PokemonCard card) {
         // This breaks
         double padding = 10;
-        setCardHeightAndWidth(imageView);
+        //setCardHeightAndWidth(imageView);
 
         Pane cardView = new Pane();
         cardView.getChildren().add(imageView);
@@ -705,8 +744,8 @@ public class GameController implements Initializable {
     private Color getColorForType(String type) {
         return switch (type) {
             case "fire" -> Color.RED;
-            case "water" -> Color.BLUE;
-            case "grass" -> Color.GREEN;
+            case "water" -> Color.DEEPSKYBLUE;
+            case "grass" -> Color.LIGHTGREEN;
             case "colorless" -> Color.GRAY;
             case "psychic" -> Color.PURPLE;
             case "fighting" -> Color.ORANGE;

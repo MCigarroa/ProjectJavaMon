@@ -1,7 +1,6 @@
 package project_javamon.homis_arena.Game;
 
-import project_javamon.homis_arena.Main;
-import project_javamon.homis_arena.Util.PokemonCardParser;
+import project_javamon.homis_arena.Util.GsonParser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ public class Game {
         player1 = new Player();
         player2 = new Player();
 
-        player1.setDeck(PokemonCardParser.getAllAttributes(new File("src/main/resources/data/Deck_1.json")));
-        player2.setDeck(PokemonCardParser.getAllAttributes(new File("src/main/resources/data/Deck_2.json")));
+        player1.setDeck(GsonParser.parseDeck(new File("src/main/resources/data/Deck_1.json")));
+        player2.setDeck(GsonParser.parseDeck(new File("src/main/resources/data/Deck_2.json")));
 
         activePlayer = player1;
         waitingPlayer = player2;
