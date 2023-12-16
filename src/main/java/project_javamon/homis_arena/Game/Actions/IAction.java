@@ -4,7 +4,7 @@ import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 
 public interface IAction {
-    void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending);
+    void TakeAction(PokemonCard cardAttacking);
 
     // Getters and Setters ==========================================================
     String getActionName();

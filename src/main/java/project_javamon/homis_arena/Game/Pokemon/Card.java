@@ -1,7 +1,9 @@
 package project_javamon.homis_arena.Game.Pokemon;
 
+import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Util.CardPosition;
 
+import java.io.StringReader;
 import java.util.HashMap;
 
 public abstract class Card {
@@ -12,6 +14,8 @@ public abstract class Card {
     private final String cardID;
 
     // Utility - to track card movements
+    private transient Player playerOwner;
+
     private CardPosition cardPosition = CardPosition.DECK;
     private CardPosition formerCardPosition = CardPosition.DECK;
 
@@ -44,6 +48,13 @@ public abstract class Card {
 
     public void setFormerCardPosition(CardPosition formerCardPosition) {
         this.formerCardPosition = formerCardPosition;
+    }
+
+    public Player getPlayerOwner() {
+        return playerOwner;
+    }
+    public void setPlayerOwner(Player player) {
+        this.playerOwner = player;
     }
 
     @Override

@@ -14,7 +14,7 @@ public class Draw implements IAction {
     }
 
     @Override
-    public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
+    public void TakeAction(PokemonCard cardAttacking) {
         // This might have to be a recursive call
     }
 

@@ -12,7 +12,7 @@ public class DamageBoost implements IAction{
         this.multiplication = multiplication;
     }
     @Override
-    public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
+    public void TakeAction(PokemonCard cardAttacking) {
 
     }
 

@@ -21,13 +21,13 @@ public class PokemonCard extends Card {
     private transient ArrayList<StatusEffect> statusEffects;
     private transient ArrayList<IAction> iAction = new ArrayList<>();
     private transient HashMap<String, Integer> energyBanked;
-    private final transient String[] types = {"fire", "water", "grass", "colorless",
-            "psychic", "fighting", "darkness", "metal", "fairy"};
 
     public PokemonCard() {
         super();
         this.maxHp = hp;
         this.energyBanked = new HashMap<>();
+        String[] types = {"fire", "water", "grass", "colorless",
+                "psychic", "fighting", "darkness", "metal", "fairy"};
         for (String type : types) {
             energyBanked.put(type, 0);
         }

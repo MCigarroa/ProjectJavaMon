@@ -14,7 +14,7 @@ public class Discard implements IAction{
 
 
     @Override
-    public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
+    public void TakeAction(PokemonCard cardAttacking) {
 
     }
 

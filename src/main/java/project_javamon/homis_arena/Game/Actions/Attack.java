@@ -1,5 +1,6 @@
 package project_javamon.homis_arena.Game.Actions;
 
+import project_javamon.homis_arena.Game.Game;
 import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Util.CardPosition;
@@ -15,6 +16,10 @@ public class Attack implements IAction {
     int damage;
     String extraActions;
 
+    public Attack() {
+
+    }
+
     public Attack(String attackName, HashMap<String, Integer> energyCost, int dmg, String extraActions) {
         this.attackName = attackName;
         this.damage = dmg;
@@ -25,24 +30,32 @@ public class Attack implements IAction {
         String[] types = {"fire", "water", "grass", "colorless",
                 "psychic", "fighting", "darkness", "metal", "fairy"};
         for (String type : types) {
-            energyCost.put(type, 0);
+            this.energyCost.put(type, 0);
         }
         this.energyCost.putAll(energyCost);
     }
 
     @Override
-    public void TakeAction(PokemonCard cardAttacking, PokemonCard cardDefending, Player playerAttacking, Player playerDefending) {
+    public void TakeAction(PokemonCard cardAttacking) {
+        PokemonCard cardDefending = (PokemonCard) (cardAttacking.getPlayerOwner() == Game.getWaitingPlayer()
+            ? Game.getActivePlayer().getActive().getFirst()
+            : Game.getWaitingPlayer().getActive().getFirst());
+        if (cardDefending.getPlayerOwner() == null) {
+            throw new RuntimeException(cardDefending + ": NULL @ TakeAction : iAction");
+        }
+
         System.out.println("Attack Attempt");
         if (canAfford(cardAttacking) && attackLegal(cardAttacking, cardDefending)) {
-            calculateDamage(cardAttacking, cardDefending);
+            cardDefending.setHp(calculateDamage(cardAttacking, cardDefending));
+            System.out.println(cardDefending + " has " + cardDefending.getHp() + " hp");
             if (cardDefending.getHp() <= 0) {
-                playerDefending.getDiscard().add(cardDefending); // updates UI
-                playerDefending.getActive().remove(cardDefending); // updates UI
+                cardDefending.getPlayerOwner().getActive().remove(cardDefending); // "should" update UI
+                cardDefending.getPlayerOwner().getDiscard().add(cardDefending); // "should" update UI
                 cardDefending.setFormerCardPosition(cardDefending.getCardPosition());
                 cardDefending.setCardPositions(CardPosition.DISCARD);
                 System.out.println("POW KILLED IT");
             }
-            System.out.println("POW HIT IT FOR " + damage);
+            cardDefending.getPlayerOwner().printPlayerCards();
         }
     }
 
@@ -51,30 +64,38 @@ public class Attack implements IAction {
         return true;
     }
 
-    private void calculateDamage(PokemonCard cardAttacking, PokemonCard cardDefending) {
+    private int calculateDamage(PokemonCard cardAttacking, PokemonCard cardDefending) {
+        final int resistance = 30;
+        final int weakness = 2;
+
         int baseDamage = damage;
-        int resistedDamage = 0;
+        int damageAdjustment = 0;
         int multiplication = 1;
 
-        // Currently only Hydro Pump actually increases dmg based on an element
+        // Currently only Hydro Pump actually increases dmg based on an element\
         if (Objects.equals(cardAttacking.getName(), "hydro pump")) {
             int waterEnergy = cardAttacking.getEnergyBanked().getOrDefault("water", 0);
             if (waterEnergy == 4) {
-                resistedDamage += 10;
+                damageAdjustment += 10;
             } else if (waterEnergy == 5) {
-                resistedDamage += 20;
+                damageAdjustment += 20;
             }
         }
 
         // Check for resistance and weakness
         if (Objects.equals(cardAttacking.getType(), cardDefending.getResistance())) {
-            resistedDamage -= 30;
+            damageAdjustment -= resistance;
         } else if (Objects.equals(cardAttacking.getType(), cardDefending.getWeakness())) {
-            multiplication *= 2;
+            multiplication *= weakness;
         }
 
-        int totalDamage = (baseDamage * multiplication) - resistedDamage;
-        cardDefending.setHp(cardDefending.getHp() - totalDamage);
+        // Kept having to refactor as pokemon keep hitting for zero
+        int totalDamage = Math.max(0, (baseDamage * multiplication) + damageAdjustment);
+        int newHp = cardDefending.getHp() - totalDamage;
+
+        System.out.println("Pow hit for " + newHp);
+
+        return newHp;
     }
 
 

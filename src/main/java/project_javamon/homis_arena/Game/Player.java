@@ -3,6 +3,7 @@ package project_javamon.homis_arena.Game;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import project_javamon.homis_arena.Game.Pokemon.Card;
+import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Util.CardPosition;
 
 import java.util.ArrayList;
@@ -62,6 +63,8 @@ public class Player {
         allCardLists.add(active);
         allCardLists.add(discard);
         allCardLists.add(prize);
+        // hate my life, so many errors because I forgot to add deck
+        allCardLists.add(deck);
 
         for (ObservableList<Card> cardList : allCardLists) {
             for (Card card : cardList) {
@@ -73,7 +76,7 @@ public class Player {
 
         System.out.println("Couldn't find the Card with ID " + cardId + ", printing all cards: ");
         printPlayerCards();
-        throw new RuntimeException("Couldn't find the Card: " + cardId);
+        return new PokemonCard();
     }
 
 
@@ -99,6 +102,7 @@ public class Player {
 
     public void setDeck(ObservableList<Card> deck) {
         this.deck = deck;
+        assignPlayerToCards();
     }
 
     public ObservableList<Card> getHand() {
@@ -146,4 +150,11 @@ public class Player {
             System.out.println("Error: Failed to remove card from " + previousPosition + " for card " + card.getCardID());
         }
     }
+
+    public void assignPlayerToCards(){
+        for (Card card : deck) {
+            card.setPlayerOwner(this);
+        }
+    }
+
 }

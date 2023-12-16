@@ -21,7 +21,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
-import project_javamon.homis_arena.Game.Actions.Attack;
 import project_javamon.homis_arena.Game.Game;
 import project_javamon.homis_arena.Game.GameState;
 import project_javamon.homis_arena.Game.Player;
@@ -73,6 +72,76 @@ public class GameController implements Initializable {
         bindPlayerToUI(Game.getActivePlayer());
         bindPlayerToUI(Game.getWaitingPlayer());
     }
+
+    // Updates ==========================================================================================
+    public void updateUI() {
+        System.out.println("Updating UI");
+        // Updates every location with cards from player
+        // Very brute, much performance eater
+        // Simplifies updates tho
+        southHand.getChildren().clear();
+        southBench.getChildren().clear();
+        southActive.getChildren().clear();
+        southPrize.getChildren().clear();
+        southDiscard.getChildren().clear();
+        //southDeck.getChildren().clear();
+        northHand.getChildren().clear();
+        northBench.getChildren().clear();
+        northActive.getChildren().clear();
+        northPrize.getChildren().clear();
+        northDiscard.getChildren().clear();
+        //northDeck.getChildren().clear();
+
+        Player player1 = Game.getActivePlayer();
+        Player player2 = Game.getWaitingPlayer();
+
+        populateContainerFromList(southHand, player1.getHand());
+        populateContainerFromList(southBench, player1.getBench());
+        populateContainerFromList(southActive, player1.getActive());
+        populateContainerFromList(southPrize, player1.getPrize());
+        populateContainerFromList(southDiscard, player1.getDiscard());
+        //populateContainerFromList(southDeck, player1.getDeck());
+        populateContainerFromList(northHand, player2.getHand());
+        populateContainerFromList(northBench, player2.getBench());
+        populateContainerFromList(northActive, player2.getActive());
+        populateContainerFromList(northPrize, player2.getPrize());
+        populateContainerFromList(northDiscard, player2.getDiscard());
+        //populateContainerFromList(northDeck, player1.getDeck());
+
+        updateActiveSpacing(southActive);
+        updateCardHandSpacing(southHand);
+        updateCardHandSpacing(northHand);
+        updateActiveSpacing(northActive);
+        //updateHandUI(player1.getHand());
+    }
+
+    private void populateContainerFromList(Pane container, ObservableList<Card> cardList) {
+        // Expensive operation but simplifies updates
+        for (Card card : cardList) {
+            ImageView imageView;
+            // Cards that should face down get backCard assignment
+            if (container.equals(southPrize) || container.equals(southDiscard) ||
+                    container.equals(northPrize) || container.equals(northHand)    || container.equals(northDiscard)) {
+                imageView = new ImageView(backCard);
+                setCardHeightAndWidth(imageView);
+                addDragAndDropCapability(imageView, card);
+            } else {
+                imageView = createCardImageView(card);
+                setCardHeightAndWidth(imageView);
+                addDragAndDropCapability(imageView, card);
+            }
+
+            if (card instanceof PokemonCard && (container.equals(southActive) || container.equals(northActive))) {
+                Pane cardView = createEnergyIcons(imageView, (PokemonCard) card);
+                container.getChildren().add(cardView);
+            } else {
+                container.getChildren().add(imageView);
+            }
+
+            setUpContextMenuWithPopUp(imageView, card);
+        }
+    }
+
 
     private void bindPlayerToUI(Player player) {
         // Applies listeners to any changes to the arrays, calling their respective UI updates
@@ -129,6 +198,7 @@ public class GameController implements Initializable {
         //populateContainerFromList(southActive, Game.getActivePlayer().getActive());
         //updateUI();
     }
+    // Updates END=======================================================================================
 
     public void initMat(){
         initDeck(northDeck, CardPosition.DECK);
@@ -161,7 +231,8 @@ public class GameController implements Initializable {
     public void onSouthDeckClicked() {
         Player currentPlayer = Game.getActivePlayer();
         currentPlayer.drawCard();
-        currentPlayer.printPlayerCards(); // debug
+        updateHandUI(currentPlayer.getHand());
+        //currentPlayer.printPlayerCards(); // debug
     }
     @FXML
     public void showHand() {
@@ -248,7 +319,7 @@ public class GameController implements Initializable {
 
             return;
         }
-        if (newLocation.equals(southActive) && card instanceof EnergyCard) {
+        if (card instanceof EnergyCard && (newLocation.equals(southActive) || newLocation.equals(southBench))) {
             currentPlayer.getDiscard().add(card); //updateCall
             currentPlayer.getHand().remove(card); //updateCall
             // If cards are energy will send to discard and add energy to card
@@ -283,74 +354,12 @@ public class GameController implements Initializable {
         else System.out.println("Error: Unknown new location for the card");
     }
 
-    public void updateUI() {
-        System.out.println("Updating UI");
-        // Updates every location with cards from player
-        // Very brute, much performance eater
-        // Simplifies updates tho
-        southHand.getChildren().clear();
-        southBench.getChildren().clear();
-        southActive.getChildren().clear();
-        southPrize.getChildren().clear();
-        southDiscard.getChildren().clear();
-        northHand.getChildren().clear();
-        northBench.getChildren().clear();
-        northActive.getChildren().clear();
-        northPrize.getChildren().clear();
-        northDiscard.getChildren().clear();
-
-        Player player1 = Game.getActivePlayer();
-        Player player2 = Game.getWaitingPlayer();
-
-        populateContainerFromList(southHand, player1.getHand());
-        populateContainerFromList(southBench, player1.getBench());
-        populateContainerFromList(southActive, player1.getActive());
-        populateContainerFromList(southPrize, player1.getPrize());
-        populateContainerFromList(southDiscard, player1.getDiscard());
-        populateContainerFromList(northHand, player2.getHand());
-        populateContainerFromList(northBench, player2.getBench());
-        populateContainerFromList(northActive, player2.getActive());
-        populateContainerFromList(northPrize, player2.getPrize());
-        populateContainerFromList(northDiscard, player2.getDiscard());
-
-        updateActiveSpacing(southActive);
-        updateCardHandSpacing(southHand);
-        updateCardHandSpacing(northHand);
-        updateActiveSpacing(northActive);
-        //updateHandUI(player1.getHand());
-    }
-
-    private void populateContainerFromList(Pane container, ObservableList<Card> cardList) {
-        // Expensive operation but simplifies updates
-        for (Card card : cardList) {
-            ImageView imageView;
-            // Cards that should face down get backCard assignment
-            if (container.equals(southPrize) || container.equals(southDiscard) ||
-                container.equals(northPrize) || container.equals(northHand)    || container.equals(northDiscard)) {
-                imageView = new ImageView(backCard);
-                setCardHeightAndWidth(imageView);
-                addDragAndDropCapability(imageView, card);
-            } else {
-                imageView = createCardImageView(card);
-                addDragAndDropCapability(imageView, card);
-                setCardHeightAndWidth(imageView);
-            }
-            if (card instanceof PokemonCard && container.equals(southActive)) {
-                Pane cardView = createEnergyIcons(imageView, (PokemonCard) card);
-                container.getChildren().add(cardView);
-
-            } else {
-                container.getChildren().add(imageView);
-            }
-            setUpContextMenuWithPopUp(imageView);
-        }
-    }
 
     public Card findCardById(String cardId) {
         return Game.getActivePlayer().findCardById(cardId);
     }
 
-    private void enableDragAndDrop(ImageView cardView) {
+    private void enableDragAndDrop(ImageView cardView, Card card) {
         cardView.setOnDragDetected(mouseEvent -> {
             Dragboard dragboard = cardView.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent clipboardContent = new ClipboardContent();
@@ -363,7 +372,7 @@ public class GameController implements Initializable {
             dragboard.setDragView(dragImage, mouseEvent.getX(), mouseEvent.getY());
             // ===============================
 
-            String cardId = (String) cardView.getProperties().get("cardId");
+            String cardId = card.getCardID();
             clipboardContent.putString(cardId);
 
             dragboard.setContent(clipboardContent);
@@ -373,7 +382,8 @@ public class GameController implements Initializable {
         cardView.setOnDragDone(event -> {
             cardView.setOpacity(1);
 
-            //setUpContextMenuWithPopUp(cardView);
+            setUpContextMenuWithPopUp(cardView, card);
+            updateUI();
             event.consume();
         });
     }
@@ -409,7 +419,7 @@ public class GameController implements Initializable {
             deck.getChildren().add(cardView);
         }
 
-        if (deck.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(deck);
+        if (deck.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(deck, -1);
         deck.setSpacing(-200);
         deck.setBackground(Background.fill(Color.BLACK));
     }
@@ -432,12 +442,12 @@ public class GameController implements Initializable {
 
     private void initBox(Pane active) {
         active.getChildren().clear();
-        if (active.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(active);
+        if (active.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(active, -1);
     }
 
     private void initBench(HBox bench){
         bench.getChildren().clear();
-        if (bench.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(bench);
+        if (bench.getLayoutY() < gameMat.getPrefHeight() / 2) flipCard(bench, -1);
         bench.setSpacing(5);
         setupDropZone(bench);
     }
@@ -482,28 +492,17 @@ public class GameController implements Initializable {
 
     private void addDragAndDropCapability(ImageView cardView, Card card) {
         String cardId = card.getCardID();
-        cardView.getProperties().put("cardId", cardId);
+        cardView.getProperties().put(cardId, card);
         System.out.println("Assigned cardId: " + cardId + " to card");
 
-        enableDragAndDrop(cardView);
+        enableDragAndDrop(cardView, card);
     }
 
-    private void setUpContextMenuWithPopUp(ImageView cardView) {
+    private void setUpContextMenuWithPopUp(ImageView cardView, Card card) {
         ContextMenu contextMenu = new ContextMenu();
 
-        menuActionsGenerator(contextMenu, cardView);
-//        MenuItem attackEmber = new MenuItem("ember");
-//        contextMenu.getItems().add(attackEmber);
-//        attackEmber.setOnAction(event -> {
-//            new Attack("Ember",new HashMap<>(Map.of("fire",1,"colorless",1)),100,"nada").TakeAction(
-//                    (PokemonCard) Game.getActivePlayer().getActive().get(0),
-//                    (PokemonCard) Game.getWaitingPlayer().getActive().get(0),
-//                    Game.getActivePlayer(),
-//                    Game.getWaitingPlayer()
-//            );
-//            populateContainerFromList(southActive, Game.getActivePlayer().getActive());
-//            populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
-//        });
+        menuActionsGenerator(contextMenu, cardView, card);
+
         MenuItem viewLargeItem = new MenuItem("View Large");
         contextMenu.getItems().add(viewLargeItem);
 
@@ -513,32 +512,25 @@ public class GameController implements Initializable {
                 contextMenu.show(cardView, event.getScreenX(), event.getScreenY()));
     }
 
-    private void menuActionsGenerator(ContextMenu contextMenu, ImageView cardView) {
-
-         Card card = findCardById((String) cardView.getProperties().get("cardId"));
+    private void menuActionsGenerator(ContextMenu contextMenu, ImageView cardView, Card card) {
 
          if ( card.getCardPosition() != CardPosition.ACTIVE && !(card instanceof PokemonCard)) {
              return;
          }
          PokemonCard pokemonCard = (PokemonCard) card;
-        AbilityBinder.attackGenerator(pokemonCard);
+         AbilityBinder.attackGenerator(pokemonCard);
          for (int index = 0; index < pokemonCard.getiAction().size(); index++) {
-             MenuItem iAction = new MenuItem(pokemonCard.getiAction().get(index).getActionName());
+             String result = formatActionName(pokemonCard, index);
+             MenuItem iAction = new MenuItem(result);
              contextMenu.getItems().add(iAction);
              int finalIndex = index;
              iAction.setOnAction(event -> {
-                 pokemonCard.getiAction().get(finalIndex).TakeAction(
-                         (PokemonCard) Game.getActivePlayer().getActive().getFirst(),
-                         (PokemonCard) Game.getWaitingPlayer().getActive().getFirst(),
-                         Game.getActivePlayer(),
-                         Game.getWaitingPlayer()
-
-                 );
-                 populateContainerFromList(southActive, Game.getActivePlayer().getActive());
-                 populateContainerFromList(northActive, Game.getWaitingPlayer().getActive());
+                 pokemonCard.getiAction().get(finalIndex).TakeAction((PokemonCard) card);
+                 updateUI();
              });
          }
     }
+
 
     private void setCardPopupEffects(ImageView cardView) {
         Popup popup = new Popup();
@@ -576,10 +568,18 @@ public class GameController implements Initializable {
                 if (found != null) return found;
             }
         }
+        // Not having north caused issues in card / ability binding
+        for (Node container : northMat) {
+            if (container instanceof Pane) {
+                ImageView found = searchContainerForCard((Pane) container, cardId);
+                if (found != null) return found;
+            }
+        }
 
         return null;
     }
     private ImageView searchContainerForCard(Pane container, String cardId) {
+        // helper to find card
         for (Node node : container.getChildren()) {
             if (node instanceof ImageView imageView) {
                 if (cardId.equals(imageView.getProperties().get("cardId"))) {
@@ -590,13 +590,15 @@ public class GameController implements Initializable {
         return null;
     }
 
-    private void flipCard(Pane pane) {
+    private void flipCard(Pane pane, double angle) {
+        // Flips cards: -1 for upside down, 0.5 for right, -0.5 for left
         for (Node node : pane.getChildren()) {
             if (node instanceof ImageView) {
-                (node).setScaleY(-1);
+                (node).setScaleY(angle);
             }
         }
     }
+
 
     private void printMatContents(String message, ArrayList<Node> mat) {
         // Used for debug
@@ -622,8 +624,18 @@ public class GameController implements Initializable {
         ImageView imageView = new ImageView(cardImage);
         addDragAndDropCapability(imageView, card);
         setCardHeightAndWidth(imageView);
-        //setUpContextMenuWithPopUp(imageView);
+        setUpContextMenuWithPopUp(imageView, card);
         return imageView;
+    }
+    private static String formatActionName(PokemonCard pokemonCard, int index) {
+        String str = pokemonCard.getiAction().get(index).getActionName();
+        String[] words = str.split(" ");
+        StringBuilder capitalizedString = new StringBuilder();
+        for (String word : words) {
+            String capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+            capitalizedString.append(capitalizedWord).append(" ");
+        }
+        return capitalizedString.toString().trim();
     }
 
     // Utility END =====================================================================================

@@ -58,19 +58,15 @@ public class GsonParser {
     }
 
     private static String getAllJsonString(File file) throws FileNotFoundException {
-
         if (!file.exists()) {
             throw new FileNotFoundException("The file does not exist: " + file.getAbsolutePath());
         }
-
-        Scanner fileScanner = new Scanner(file);
-        StringBuilder jsonString = new StringBuilder();
-
-        while (fileScanner.hasNextLine()) {
-            jsonString.append(fileScanner.nextLine());
+        try(Scanner fileScanner = new Scanner(file)) {  // use try-with-resources for proper resource handling
+            StringBuilder jsonString = new StringBuilder();
+            while (fileScanner.hasNextLine()) {
+                jsonString.append(fileScanner.nextLine());
+            }
+            return jsonString.toString();
         }
-
-        fileScanner.close();
-        return jsonString.toString();
     }
 }

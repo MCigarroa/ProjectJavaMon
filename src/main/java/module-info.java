@@ -14,6 +14,7 @@ module project_javamon.homis_arena {
 
 
     opens project_javamon.homis_arena.Game.Pokemon to com.google.gson;
+    opens project_javamon.homis_arena.Game.Actions to com.google.gson;
     opens project_javamon.homis_arena.Util to com.google.gson;
     exports project_javamon.homis_arena.Util to com.google.gson;
     opens project_javamon.homis_arena to javafx.fxml;
