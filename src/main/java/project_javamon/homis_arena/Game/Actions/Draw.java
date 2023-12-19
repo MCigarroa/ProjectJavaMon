@@ -1,25 +1,32 @@
 package project_javamon.homis_arena.Game.Actions;
 
-import project_javamon.homis_arena.Game.Player;
-import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
+import project_javamon.homis_arena.Game.Pokemon.Card;
+import project_javamon.homis_arena.Util.CardPosition;
 
 public class Draw implements IAction {
-    int quantity;
-    String type;
+    String name;
+    int amount;
 
 
-    public Draw(int quantity, String type) {
-        this.quantity = quantity;
-        this.type = type;
+    public Draw(String name,int amount) {
+        this.name = name;
+        this.amount = amount;
     }
 
     @Override
-    public void TakeAction(PokemonCard cardAttacking) {
-        // This might have to be a recursive call
+    public void TakeAction(Card cardActing) {
+        for (int index = 0; index < amount; index++) {
+            cardActing.getPlayerOwner().drawCard();
+        }
+        cardActing.getPlayerOwner().removeFromPrevious(cardActing, CardPosition.DISCARD);
     }
 
     @Override
     public String getActionName() {
-        return null;
+        return name;
     }
+
+
+
+
 }

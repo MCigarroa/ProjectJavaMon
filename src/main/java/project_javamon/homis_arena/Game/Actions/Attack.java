@@ -2,8 +2,10 @@ package project_javamon.homis_arena.Game.Actions;
 
 import project_javamon.homis_arena.Game.Game;
 import project_javamon.homis_arena.Game.Player;
+import project_javamon.homis_arena.Game.Pokemon.Card;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 import project_javamon.homis_arena.Util.CardPosition;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,15 +22,15 @@ public class Attack implements IAction {
 
     }
 
-    public Attack(String attackName, HashMap<String, Integer> energyCost, int dmg, String extraActions) {
+    public Attack(String attackName, HashMap<String, Integer> energyCost, int damage, String extraActions) {
         this.attackName = attackName;
-        this.damage = dmg;
+        this.damage = damage;
         this.extraActions = extraActions;
 
         // We need to be sure that this is Map is properly instantiated to how Player is
         this.energyCost = new HashMap<>();
         String[] types = {"fire", "water", "grass", "colorless",
-                "psychic", "fighting", "darkness", "metal", "fairy"};
+                "psychic", "fighting", "darkness", "metal", "fairy", "electric"};
         for (String type : types) {
             this.energyCost.put(type, 0);
         }
@@ -36,7 +38,8 @@ public class Attack implements IAction {
     }
 
     @Override
-    public void TakeAction(PokemonCard cardAttacking) {
+    public void TakeAction(Card cardActing) {
+        PokemonCard cardAttacking = (PokemonCard) cardActing;
         PokemonCard cardDefending = (PokemonCard) (cardAttacking.getPlayerOwner() == Game.getWaitingPlayer()
             ? Game.getActivePlayer().getActive().getFirst()
             : Game.getWaitingPlayer().getActive().getFirst());
@@ -46,6 +49,7 @@ public class Attack implements IAction {
 
         System.out.println("Attack Attempt");
         if (canAfford(cardAttacking) && attackLegal(cardAttacking, cardDefending)) {
+            System.out.println("Can Attack");
             cardDefending.setHp(calculateDamage(cardAttacking, cardDefending));
             System.out.println(cardDefending + " has " + cardDefending.getHp() + " hp");
             if (cardDefending.getHp() <= 0) {
@@ -55,7 +59,9 @@ public class Attack implements IAction {
                 cardDefending.setCardPositions(CardPosition.DISCARD);
                 System.out.println("POW KILLED IT");
             }
-            cardDefending.getPlayerOwner().printPlayerCards();
+            if (attackName == "thunder jolt" || attackName == "thunder"){
+                new FlipCoin().TakeAction(cardActing);
+            }
         }
     }
 
@@ -73,13 +79,17 @@ public class Attack implements IAction {
         int multiplication = 1;
 
         // Currently only Hydro Pump actually increases dmg based on an element\
-        if (Objects.equals(cardAttacking.getName(), "hydro pump")) {
+        if (Objects.equals(this.getActionName(), "hydro pump")) {
             int waterEnergy = cardAttacking.getEnergyBanked().getOrDefault("water", 0);
             if (waterEnergy == 4) {
                 damageAdjustment += 10;
             } else if (waterEnergy == 5) {
                 damageAdjustment += 20;
             }
+        }
+
+        if (Objects.equals(this.getActionName(), "flail")) {
+            baseDamage = (cardAttacking.getMaxHp() - cardAttacking.getHp()) * 10;
         }
 
         // Check for resistance and weakness

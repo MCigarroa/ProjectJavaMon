@@ -57,6 +57,27 @@ public class GsonParser {
         return new ArrayList<>();
     }
 
+    public static ArrayList<IAction> getAllDraw(String file) {
+        try {
+            String json = getAllJsonString(new File(file));
+
+            // GSON MAGIC ==============================================
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(IAction.class, new IActionDeserializer());
+            Gson gson = builder.create();
+            // GSON MAGIC END ==========================================
+
+            Type actionListType = new TypeToken<ArrayList<IAction>>(){}.getType();
+            ArrayList<IAction> actionList = gson.fromJson(json, actionListType);
+            return actionList;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.getMessage());
+        } catch (JsonSyntaxException e) {
+            System.out.println("JSON is not properly formatted: " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
     private static String getAllJsonString(File file) throws FileNotFoundException {
         if (!file.exists()) {
             throw new FileNotFoundException("The file does not exist: " + file.getAbsolutePath());

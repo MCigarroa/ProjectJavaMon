@@ -153,6 +153,9 @@ public class Player {
 
     public void assignPlayerToCards(){
         for (Card card : deck) {
+            if ( card instanceof PokemonCard) {
+                ((PokemonCard) card).setMaxHp(((PokemonCard) card).getHp());
+            }
             card.setPlayerOwner(this);
         }
     }

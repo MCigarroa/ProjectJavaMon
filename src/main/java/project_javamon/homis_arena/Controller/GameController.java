@@ -27,6 +27,7 @@ import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Game.Pokemon.Card;
 import project_javamon.homis_arena.Game.Pokemon.EnergyCard;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
+import project_javamon.homis_arena.Game.Pokemon.TrainerCard;
 import project_javamon.homis_arena.Util.AbilityBinder;
 import project_javamon.homis_arena.Util.CardPosition;
 import javafx.collections.ObservableList;
@@ -35,7 +36,6 @@ import javafx.collections.ListChangeListener;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Consumer;
 
 
 public class GameController implements Initializable {
@@ -131,7 +131,8 @@ public class GameController implements Initializable {
                 addDragAndDropCapability(imageView, card);
             }
 
-            if (card instanceof PokemonCard && (container.equals(southActive) || container.equals(northActive))) {
+            if ((card instanceof PokemonCard || card instanceof EnergyCard) &&
+                    (container.equals(southActive) || container.equals(northActive) || container.equals(southBench) || container.equals(northBench))) {
                 Pane cardView = createEnergyIcons(imageView, (PokemonCard) card);
                 container.getChildren().add(cardView);
             } else {
@@ -514,21 +515,51 @@ public class GameController implements Initializable {
 
     private void menuActionsGenerator(ContextMenu contextMenu, ImageView cardView, Card card) {
 
-         if ( card.getCardPosition() != CardPosition.ACTIVE && !(card instanceof PokemonCard)) {
-             return;
-         }
-         PokemonCard pokemonCard = (PokemonCard) card;
-         AbilityBinder.attackGenerator(pokemonCard);
-         for (int index = 0; index < pokemonCard.getiAction().size(); index++) {
-             String result = formatActionName(pokemonCard, index);
-             MenuItem iAction = new MenuItem(result);
-             contextMenu.getItems().add(iAction);
-             int finalIndex = index;
-             iAction.setOnAction(event -> {
-                 pokemonCard.getiAction().get(finalIndex).TakeAction((PokemonCard) card);
-                 updateUI();
-             });
-         }
+        if ( card instanceof TrainerCard ) {
+            AbilityBinder.drawGenerator((TrainerCard) card);
+
+            for ( int index = 0; index < ((TrainerCard) card).getiAction().size(); index++) {
+                String trainerAbility = formatActionName(((TrainerCard) card).getiAction().get(index).getActionName());
+                MenuItem menuItem = new MenuItem(trainerAbility);
+                contextMenu.getItems().add(menuItem);
+                int finalIndex = index;
+                menuItem.setOnAction(event -> {
+                    ((TrainerCard) card).getiAction().get(finalIndex).TakeAction(card);
+                    updateUI();
+                });
+            }
+
+        } else if ( card instanceof EnergyCard) {
+            // This adds Options to the card to add energy to Pokémon
+            for (int index = 0; index < card.getPlayerOwner().getBench().size(); index++) {
+                PokemonCard pokemonCard = (PokemonCard) card.getPlayerOwner().getBench().get(index);
+                String pokemonName = formatActionName(pokemonCard.getName());
+                MenuItem addEnergyTo = new MenuItem(pokemonName);
+                contextMenu.getItems().add(addEnergyTo);
+
+                addEnergyTo.setOnAction(event -> {
+                    pokemonCard.addEnergy((EnergyCard)card);
+                    moveCardToLocation(card.getCardID(),southDiscard);
+                    updateUI();
+                });
+            }
+        } else if ( card.getCardPosition() == CardPosition.ACTIVE && card instanceof PokemonCard) {
+            PokemonCard pokemonCard = (PokemonCard) card;
+            AbilityBinder.attackGenerator(pokemonCard);
+            for (int index = 0; index < pokemonCard.getiAction().size(); index++) {
+                String result = formatActionName(pokemonCard.getiAction().get(index).getActionName());
+                MenuItem iAction = new MenuItem(result);
+                contextMenu.getItems().add(iAction);
+                int finalIndex = index;
+                iAction.setOnAction(event -> {
+                    if (pokemonCard.getPlayerOwner() == Game.getActivePlayer()) {
+                        pokemonCard.getiAction().get(finalIndex).TakeAction((PokemonCard) card);
+                        updateUI();
+                    }
+                });
+            }
+        }
+
     }
 
 
@@ -627,8 +658,7 @@ public class GameController implements Initializable {
         setUpContextMenuWithPopUp(imageView, card);
         return imageView;
     }
-    private static String formatActionName(PokemonCard pokemonCard, int index) {
-        String str = pokemonCard.getiAction().get(index).getActionName();
+    private String formatActionName(String str) {
         String[] words = str.split(" ");
         StringBuilder capitalizedString = new StringBuilder();
         for (String word : words) {
@@ -652,10 +682,11 @@ public class GameController implements Initializable {
 
         ImageView coinView = new ImageView(homi);
         setCardHeightAndWidth(coinView);
+
         Button flipButton = new Button("Flip Coin");
         flipButton.setTranslateY(80);
         flipButton.setOnAction(e -> {
-             flipCoin(coinView, homi, backCard);
+             flipCoin();
         });
 
         Button exitFlipButton = new Button("Exit");
@@ -675,31 +706,23 @@ public class GameController implements Initializable {
         StackPane.setAlignment(coinPane, Pos.CENTER);
     }
 
-    private void flipCoin(ImageView coinView, Image homi, Image backCard) {
+    public void flipCoin() {
         Random random = new Random();
+        ImageView coinView = new ImageView(homi);
+        setCardHeightAndWidth(coinView);
         RotateTransition rt = new RotateTransition(Duration.seconds(1), coinView);
         rt.setByAngle(360 * 3); // Rotate three times
+
+        boolean result = random.nextBoolean();
         rt.setOnFinished(e -> {
             // Randomly choose heads or tails at the end of the animation
             // Need way to send bool for game logic
-            boolean result = random.nextBoolean();
+
             coinView.setImage(result ? homi : backCard);
         });
         rt.play();
     }
-    public static void flipCoin(ImageView coinView, Image homi, Image backCard, Consumer<Boolean> callback) {
-        Random random = new Random();
-        RotateTransition rt = new RotateTransition(Duration.seconds(1), coinView);
-        rt.setByAngle(360 * 3); // Rotate three times
-        rt.setOnFinished(e -> {
-            // Randomly choose heads or tails at the end of the animation
-            // Need way to send bool for game logic
-            boolean result = random.nextBoolean();
-            coinView.setImage(result ? homi : backCard);
-            callback.accept(result);
-        });
-        rt.play();
-    }
+
 
     // Coin Flip END ====================================================================================
     // Energy Icon ======================================================================================
@@ -710,15 +733,21 @@ public class GameController implements Initializable {
         //setCardHeightAndWidth(imageView);
 
         Pane cardView = new Pane();
+
         cardView.getChildren().add(imageView);
 
-        // Add HP
+        // Add HP with pane back drop
+        Pane pane = new Pane();
+        pane.setStyle("-fx-background-color: rgba(100, 100, 100, 0.5);");
+        pane.setPrefSize(40, 40);
+        pane.relocate(- 40, 0);
+
         Text healthText = new Text(String.valueOf(card.getHp()));
         healthText.setStyle("-fx-font-size: 20;");
-        healthText.setFill(Color.BLACK);
+        healthText.setFill(Color.WHITE);
         // Positions the HP top left corner
-        healthText.relocate(padding, padding);
-        cardView.getChildren().add(healthText);
+        healthText.relocate(- 40 + padding, padding);
+        cardView.getChildren().addAll(pane,healthText);
 
 
         double radius = 10;
@@ -738,11 +767,13 @@ public class GameController implements Initializable {
                 Text energyAmountText = new Text(String.valueOf(amount));
                 energyAmountText.setFill(Color.BLACK);
                 energyAmountText.setStyle("-fx-font-weight: bold; -fx-font-size: " + (radius * 1.5) + ";");
+
                     
                 energyIndicator.getChildren().addAll(energyCircle, energyAmountText);
 
                 // location
                 double xPosition = imageView.getFitWidth() - (radius / 2) - (padding / 2);
+                energyAmountText.relocate(xPosition,initialY - 10);
                 energyIndicator.relocate(xPosition, initialY);
 
                 cardView.getChildren().add(energyIndicator);

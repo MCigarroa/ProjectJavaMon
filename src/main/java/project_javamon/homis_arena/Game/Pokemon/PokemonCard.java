@@ -1,7 +1,5 @@
 package project_javamon.homis_arena.Game.Pokemon;
 
-import kotlin.jvm.JvmStatic;
-import project_javamon.homis_arena.Game.Actions.Attack;
 import project_javamon.homis_arena.Game.Actions.IAction;
 import project_javamon.homis_arena.Util.StatusEffect;
 
@@ -27,7 +25,7 @@ public class PokemonCard extends Card {
         this.maxHp = hp;
         this.energyBanked = new HashMap<>();
         String[] types = {"fire", "water", "grass", "colorless",
-                "psychic", "fighting", "darkness", "metal", "fairy"};
+                "psychic", "fighting", "darkness", "metal", "fairy","electric"};
         for (String type : types) {
             energyBanked.put(type, 0);
         }
@@ -120,5 +118,13 @@ public class PokemonCard extends Card {
 
     public void addStatusEffects(StatusEffect statusEffect) {
         statusEffects.add(statusEffect);
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
     }
 }

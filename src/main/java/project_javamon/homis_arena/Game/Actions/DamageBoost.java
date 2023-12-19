@@ -1,6 +1,7 @@
 package project_javamon.homis_arena.Game.Actions;
 
 import project_javamon.homis_arena.Game.Player;
+import project_javamon.homis_arena.Game.Pokemon.Card;
 import project_javamon.homis_arena.Game.Pokemon.PokemonCard;
 
 public class DamageBoost implements IAction{
@@ -11,8 +12,9 @@ public class DamageBoost implements IAction{
         this.dmg = dmg;
         this.multiplication = multiplication;
     }
+
     @Override
-    public void TakeAction(PokemonCard cardAttacking) {
+    public void TakeAction(Card cardActing) {
 
     }
 
