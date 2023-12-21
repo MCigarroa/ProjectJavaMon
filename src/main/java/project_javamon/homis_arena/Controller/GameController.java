@@ -232,8 +232,8 @@ public class GameController implements Initializable {
     public void onSouthDeckClicked() {
         Player currentPlayer = Game.getActivePlayer();
         currentPlayer.drawCard();
-        updateHandUI(currentPlayer.getHand());
-        //currentPlayer.printPlayerCards(); // debug
+        // updateHandUI(currentPlayer.getHand());
+        // currentPlayer.printPlayerCards(); // debug
     }
     @FXML
     public void showHand() {
@@ -524,7 +524,7 @@ public class GameController implements Initializable {
                 contextMenu.getItems().add(menuItem);
                 int finalIndex = index;
                 menuItem.setOnAction(event -> {
-                    ((TrainerCard) card).getiAction().get(finalIndex).TakeAction(card);
+                    card.getiAction().get(finalIndex).TakeAction(card);
                     updateUI();
                 });
             }
@@ -553,7 +553,7 @@ public class GameController implements Initializable {
                 int finalIndex = index;
                 iAction.setOnAction(event -> {
                     if (pokemonCard.getPlayerOwner() == Game.getActivePlayer()) {
-                        pokemonCard.getiAction().get(finalIndex).TakeAction((PokemonCard) card);
+                        pokemonCard.getiAction().get(finalIndex).TakeAction(card);
                         updateUI();
                     }
                 });

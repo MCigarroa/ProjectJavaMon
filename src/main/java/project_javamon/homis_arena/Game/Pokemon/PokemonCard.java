@@ -17,7 +17,7 @@ public class PokemonCard extends Card {
 
     private transient int maxHp;
     private transient ArrayList<StatusEffect> statusEffects;
-    private transient ArrayList<IAction> iAction = new ArrayList<>();
+
     private transient HashMap<String, Integer> energyBanked;
 
     public PokemonCard() {
@@ -96,17 +96,7 @@ public class PokemonCard extends Card {
         this.nextStage = nextStage;
     }
 
-    public ArrayList<IAction> getiAction() {
-        return iAction;
-    }
 
-    public void setiAction(ArrayList<IAction> iAction) {
-        this.iAction = iAction;
-    }
-
-    public void addiAction(IAction iAction) {
-        this.iAction.add(iAction);
-    }
 
     public ArrayList<StatusEffect> getStatusEffects() {
         return statusEffects;

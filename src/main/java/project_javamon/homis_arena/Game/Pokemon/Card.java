@@ -1,9 +1,11 @@
 package project_javamon.homis_arena.Game.Pokemon;
 
+import project_javamon.homis_arena.Game.Actions.IAction;
 import project_javamon.homis_arena.Game.Player;
 import project_javamon.homis_arena.Util.CardPosition;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Card {
@@ -12,6 +14,8 @@ public abstract class Card {
 
     private static int uniqueNum = 0;
     private final String cardID;
+
+    private transient ArrayList<IAction> iAction = new ArrayList<>();
 
     // Utility - to track card movements
     private transient Player playerOwner;
@@ -48,6 +52,17 @@ public abstract class Card {
 
     public void setFormerCardPosition(CardPosition formerCardPosition) {
         this.formerCardPosition = formerCardPosition;
+    }
+    public ArrayList<IAction> getiAction() {
+        return iAction;
+    }
+
+    public void setiAction(ArrayList<IAction> iAction) {
+        this.iAction = iAction;
+    }
+
+    public void addiAction(IAction iAction) {
+        this.iAction.add(iAction);
     }
 
     public Player getPlayerOwner() {

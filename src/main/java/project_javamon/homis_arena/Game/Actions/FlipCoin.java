@@ -10,10 +10,9 @@ import java.util.Objects;
 import java.util.Random;
 
 public class FlipCoin implements IAction{
-
+    Random random  = new Random();
     @Override
     public void TakeAction(Card cardActing) {
-        Random random  = new Random();
         if (random.nextBoolean()) {
             if (Objects.equals(cardActing.getName(), "thunder") || Objects.equals(cardActing.getName(), "thunder jolt")) {
                 PokemonCard pokemonCard = (PokemonCard)cardActing;
