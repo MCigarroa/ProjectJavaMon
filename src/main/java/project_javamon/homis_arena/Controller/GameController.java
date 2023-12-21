@@ -682,11 +682,10 @@ public class GameController implements Initializable {
 
         ImageView coinView = new ImageView(homi);
         setCardHeightAndWidth(coinView);
-
         Button flipButton = new Button("Flip Coin");
         flipButton.setTranslateY(80);
         flipButton.setOnAction(e -> {
-             flipCoin();
+            flipCoin(coinView, homi, backCard);
         });
 
         Button exitFlipButton = new Button("Exit");
@@ -706,24 +705,18 @@ public class GameController implements Initializable {
         StackPane.setAlignment(coinPane, Pos.CENTER);
     }
 
-    public void flipCoin() {
+    private void flipCoin(ImageView coinView, Image homi, Image backCard) {
         Random random = new Random();
-        ImageView coinView = new ImageView(homi);
-        setCardHeightAndWidth(coinView);
         RotateTransition rt = new RotateTransition(Duration.seconds(1), coinView);
         rt.setByAngle(360 * 3); // Rotate three times
-
-        boolean result = random.nextBoolean();
         rt.setOnFinished(e -> {
             // Randomly choose heads or tails at the end of the animation
             // Need way to send bool for game logic
-
+            boolean result = random.nextBoolean();
             coinView.setImage(result ? homi : backCard);
         });
         rt.play();
     }
-
-
     // Coin Flip END ====================================================================================
     // Energy Icon ======================================================================================
 
